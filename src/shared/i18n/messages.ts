@@ -7,6 +7,8 @@ export const messages = {
       copy: "Следи за локальными сервисами, смотри live-логи и анализируй кластеры ошибок в одном интерфейсе.",
       section: "Рабочий поток",
       footer: "Demo-ready MVP, выровненный под текущие backend-контракты.",
+      collapse: "Скрыть sidebar",
+      expand: "Показать sidebar",
       nav: {
         overview: "Обзор",
         containers: "Контейнеры",
@@ -27,7 +29,9 @@ export const messages = {
       themeHint: "Переключение темы для демо",
       theme: "Тема",
       dark: "Темная",
-      light: "Светлая"
+      light: "Светлая",
+      darkMode: "Темный режим",
+      lightMode: "Светлый режим"
     },
     common: {
       loadingAnalytics: "Загрузка аналитики...",
@@ -148,6 +152,8 @@ export const messages = {
       copy: "Жергілікті сервистерді бақыла, live-логтарды қара және қате кластерлерін бір интерфейсте талда.",
       section: "Жұмыс ағыны",
       footer: "Ағымдағы backend контракттарына сәйкес demo-ready MVP.",
+      collapse: "Sidebar-ды жасыру",
+      expand: "Sidebar-ды көрсету",
       nav: {
         overview: "Шолу",
         containers: "Контейнерлер",
@@ -158,7 +164,7 @@ export const messages = {
       }
     },
     locale: { label: "Тіл", ru: "RU", kz: "KZ", en: "EN" },
-    settingsPanel: { quick: "Жылдам баптаулар", themeHint: "Демо үшін тема ауыстырғышы", theme: "Тема", dark: "Қара", light: "Ашық" },
+    settingsPanel: { quick: "Жылдам баптаулар", themeHint: "Демо үшін тема ауыстырғышы", theme: "Тема", dark: "Қара", light: "Ашық", darkMode: "Қара режим", lightMode: "Ашық режим" },
     common: {
       loadingAnalytics: "Аналитика жүктелуде...",
       loadingContainers: "Контейнерлер жүктелуде...",
@@ -278,6 +284,8 @@ export const messages = {
       copy: "Watch local services, inspect live logs, and track cluster activity from one product shell.",
       section: "Monitoring Flow",
       footer: "Demo-ready MVP aligned to the current backend contracts.",
+      collapse: "Hide sidebar",
+      expand: "Show sidebar",
       nav: {
         overview: "Overview",
         containers: "Containers",
@@ -288,7 +296,7 @@ export const messages = {
       }
     },
     locale: { label: "Language", ru: "RU", kz: "KZ", en: "EN" },
-    settingsPanel: { quick: "Quick Settings", themeHint: "Theme switch for demo use", theme: "Theme", dark: "Dark", light: "Light" },
+    settingsPanel: { quick: "Quick Settings", themeHint: "Theme switch for demo use", theme: "Theme", dark: "Dark", light: "Light", darkMode: "Dark mode", lightMode: "Light mode" },
     common: {
       loadingAnalytics: "Loading analytics...",
       loadingContainers: "Loading containers...",

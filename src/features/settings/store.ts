@@ -10,12 +10,14 @@ type SettingsState = {
   reconnectMaxMs: number;
   theme: Theme;
   locale: Locale;
+  sidebarCollapsed: boolean;
   setApiBaseUrl: (v: string) => void;
   setWsBaseUrl: (v: string) => void;
   setReconnectMinMs: (v: number) => void;
   setReconnectMaxMs: (v: number) => void;
   setTheme: (v: Theme) => void;
   setLocale: (v: Locale) => void;
+  toggleSidebar: () => void;
   resetDefaults: () => void;
 };
 
@@ -26,7 +28,8 @@ const defaults = {
   reconnectMinMs: 800,
   reconnectMaxMs: 10_000,
   theme: "dark" as Theme,
-  locale: "ru" as Locale
+  locale: "ru" as Locale,
+  sidebarCollapsed: false
 };
 
 function load() {
@@ -46,6 +49,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   reconnectMaxMs: initial.reconnectMaxMs ?? defaults.reconnectMaxMs,
   theme: initial.theme ?? defaults.theme,
   locale: initial.locale ?? defaults.locale,
+  sidebarCollapsed: initial.sidebarCollapsed ?? defaults.sidebarCollapsed,
   setApiBaseUrl: (apiBaseUrl) => set((state) => persist({ ...state, apiBaseUrl })),
   setWsBaseUrl: (wsBaseUrl) => set((state) => persist({ ...state, wsBaseUrl })),
   setReconnectMinMs: (reconnectMinMs) => set((state) => persist({ ...state, reconnectMinMs })),
@@ -58,6 +62,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     document.documentElement.lang = locale;
     set((state) => persist({ ...state, locale }));
   },
+  toggleSidebar: () => set((state) => persist({ ...state, sidebarCollapsed: !state.sidebarCollapsed })),
   resetDefaults: () => {
     document.documentElement.setAttribute("data-theme", defaults.theme);
     document.documentElement.lang = defaults.locale;
