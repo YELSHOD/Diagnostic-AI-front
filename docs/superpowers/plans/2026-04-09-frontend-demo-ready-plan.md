@@ -1,5 +1,23 @@
 # Frontend Demo-Ready Plan
 
+## Current Status
+
+Completed:
+- product shell and navigation polished
+- overview, containers, live logs, analysis, settings, and AI chat presentation improved
+- localization added for `RU / KZ / EN`
+- sidebar collapse, theme toggle, header/footer, profile menu, and motion polish implemented
+- frontend build verified successfully during the current wave
+
+Next planned wave:
+- add real authentication flow connected to backend
+- replace placeholder profile menu state with backend-driven user identity
+- add `Login`, `Register`, and `Account / Учетные данные` pages
+- protect main routes behind session state
+- wire logout and current-user loading into header/profile menu
+
+Auth should now be treated as the next major frontend milestone after the demo-ready shell polish.
+
 ## Execution Principle
 Polish the existing MVP in-place. Do not invent new backend dependencies. Keep the current route map, but raise the product quality and presentation level.
 
@@ -50,6 +68,28 @@ Polish the existing MVP in-place. Do not invent new backend dependencies. Keep t
 - Run a full frontend build.
 - Capture any remaining UI debt or backend dependencies in notes.
 - Leave a clean checkpoint for the later migration/database phase.
+
+## Next Phase: Frontend Auth
+
+### Task 9: Add auth state and token handling
+- store `accessToken`, `refreshToken`, `currentUser`, and auth status
+- attach bearer token to backend API requests
+- clear session when refresh fails
+
+### Task 10: Add auth pages
+- `LoginPage`
+- `RegisterPage`
+- `AccountPage`
+
+### Task 11: Protect routes
+- keep login/register public
+- protect the main shell routes
+- redirect unauthenticated users to login
+
+### Task 12: Connect profile menu and account page
+- replace placeholder profile summary with backend user data
+- replace generic menu action with `Учетные данные`
+- support account update and password change
 
 ## Verification
 - `npm run build`
