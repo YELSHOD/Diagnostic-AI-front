@@ -9,8 +9,8 @@ const items = [
   ["/containers", "Containers"],
   ["/logs", "Live Logs"],
   ["/analysis", "Analysis"],
-  ["/ai-chat", "AI Chat"],
-  ["/settings", "Settings"]
+  ["/settings", "Settings"],
+  ["/ai-chat", "AI Chat (Later)"]
 ] as const;
 
 export function ShellLayout({ children }: Props) {
