@@ -11,7 +11,7 @@ export function LocaleSwitcher({ compact = false }: { compact?: boolean }) {
 
   return (
     <div className={compact ? "locale-switcher compact" : "locale-switcher"}>
-      <div className="locale-label">{t("locale.label")}</div>
+      {!compact ? <div className="locale-label">{t("locale.label")}</div> : null}
       <div className="locale-track">
         {locales.map((entry) => (
           <button
