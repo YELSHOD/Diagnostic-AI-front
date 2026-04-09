@@ -81,6 +81,54 @@ a {
   margin-bottom: 10px;
 }
 
+.locale-switcher {
+  margin: 14px 0 16px;
+  display: grid;
+  gap: 8px;
+}
+
+.locale-switcher.compact {
+  margin-top: 4px;
+}
+
+.locale-label {
+  color: var(--text-muted);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.locale-track {
+  display: inline-flex;
+  gap: 6px;
+  padding: 6px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--bg-soft) 86%, transparent);
+}
+
+.locale-pill {
+  border: 0;
+  background: transparent;
+  color: var(--text-muted);
+  border-radius: 999px;
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  transition: background 140ms ease, color 140ms ease, transform 140ms ease;
+}
+
+.locale-pill:hover {
+  transform: translateY(-1px);
+}
+
+.locale-pill.active {
+  background: var(--accent);
+  color: #062120;
+}
+
 .sidebar-footer {
   margin-top: 18px;
   padding: 12px;

@@ -1,7 +1,10 @@
-﻿import { PageIntro } from "@shared/ui/PageIntro";
+﻿import { LocaleSwitcher } from "@features/settings/LocaleSwitcher";
+import { useI18n } from "@shared/i18n/useI18n";
+import { PageIntro } from "@shared/ui/PageIntro";
 import { useSettingsStore } from "@features/settings/store";
 
 export function SettingsPage() {
+  const { t } = useI18n();
   const apiBaseUrl = useSettingsStore((s) => s.apiBaseUrl);
   const wsBaseUrl = useSettingsStore((s) => s.wsBaseUrl);
   const reconnectMinMs = useSettingsStore((s) => s.reconnectMinMs);
@@ -15,34 +18,37 @@ export function SettingsPage() {
   return (
     <div>
       <PageIntro
-        title="Settings"
-        description="These values keep the frontend aligned with your local backend while you run the observability stack during development and demos from different machines, ports, and environments."
-        actions={<button className="button secondary" onClick={resetDefaults}>Reset Defaults</button>}
+        title={t("settings.title")}
+        description={t("settings.description")}
+        actions={<button className="button secondary" onClick={resetDefaults}>{t("common.resetDefaults")}</button>}
       />
       <section className="card" style={{ maxWidth: 760 }}>
         <div style={{ marginBottom: 16, color: "var(--text-muted)", maxWidth: 680 }}>
-          Use these controls when your Spring backend or websocket endpoint runs on a different local port. Reconnect values control how aggressively the log stream retries after a disconnect. This is the page that keeps the frontend usable when you switch devices or demo from a different host.
+          {t("settings.helper")}
+        </div>
+        <div style={{ marginBottom: 16 }}>
+          <LocaleSwitcher />
         </div>
         <div style={{ display: "grid", gap: 12 }}>
           <label>
-            API Base URL
+            {t("settings.apiBaseUrl")}
             <input className="input" style={{ display: "block", width: "100%" }} value={apiBaseUrl} onChange={(e) => setApiBaseUrl(e.target.value)} />
           </label>
           <label>
-            WS Base URL
+            {t("settings.wsBaseUrl")}
             <input className="input" style={{ display: "block", width: "100%" }} value={wsBaseUrl} onChange={(e) => setWsBaseUrl(e.target.value)} />
           </label>
           <label>
-            Reconnect Min (ms)
+            {t("settings.reconnectMin")}
             <input className="input" type="number" value={reconnectMinMs} onChange={(e) => setReconnectMinMs(Number(e.target.value))} />
           </label>
           <label>
-            Reconnect Max (ms)
+            {t("settings.reconnectMax")}
             <input className="input" type="number" value={reconnectMaxMs} onChange={(e) => setReconnectMaxMs(Number(e.target.value))} />
           </label>
         </div>
         <div className="card" style={{ marginTop: 16, background: "var(--bg-soft)" }}>
-          Recommended local defaults: <code>http://localhost:8080</code> for REST and <code>ws://localhost:8080</code> for the websocket endpoint.
+          {t("settings.defaultsNote")}
         </div>
       </section>
     </div>

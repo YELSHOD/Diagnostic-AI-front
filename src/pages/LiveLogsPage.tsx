@@ -3,9 +3,11 @@ import { Link, useSearchParams } from "react-router-dom";
 import { useLogsSocket } from "@features/realtime/useLogsSocket";
 import { useRealtimeStore } from "@features/realtime/store";
 import { useSettingsStore } from "@features/settings/store";
+import { useI18n } from "@shared/i18n/useI18n";
 import { PageIntro } from "@shared/ui/PageIntro";
 
 export function LiveLogsPage() {
+  const { t } = useI18n();
   const [params] = useSearchParams();
   const [text, setText] = useState("");
   const [level, setLevel] = useState("");
@@ -38,43 +40,43 @@ export function LiveLogsPage() {
       <PageIntro
         title="Live Logs"
         description={containerId
-          ? "Watch the selected container in real time and inspect the latest structured error event."
-          : "Pick a container first, then this page becomes the primary live investigation screen."}
-        actions={containerId ? <Link className="button secondary" to="/containers">Change Container</Link> : undefined}
+          ? t("logs.descriptionSelected")
+          : t("logs.descriptionEmpty")}
+        actions={containerId ? <Link className="button secondary" to="/containers">{t("common.changeContainer")}</Link> : undefined}
       />
       <div className="topbar">
         <div style={{ color: "var(--text-muted)", fontSize: 14 }}>
-          {containerId ? `Selected container: ${containerId}` : "No container selected"}
+          {containerId ? `${t("logs.selected")}: ${containerId}` : t("logs.notSelected")}
         </div>
         <div>
           <span className="badge" style={{ borderColor: connected ? "var(--ok)" : "var(--danger)" }}>
-            {connected ? "Connected" : "Disconnected"}
+            {connected ? t("common.connected") : t("common.disconnected")}
           </span>
         </div>
       </div>
-      {!containerId ? <div className="card empty-state">Pick a container from the <Link to="/containers">Containers</Link> page to start the live stream.</div> : null}
+      {!containerId ? <div className="card empty-state">{t("logs.pickContainer")}</div> : null}
       {containerId ? (
         <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, marginBottom: 16 }}>
           <article className="card kpi-card">
-            <div style={{ color: "var(--text-muted)", fontSize: 12, letterSpacing: "0.04em", textTransform: "uppercase" }}>Visible Lines</div>
+            <div style={{ color: "var(--text-muted)", fontSize: 12, letterSpacing: "0.04em", textTransform: "uppercase" }}>{t("logs.visibleLines")}</div>
             <div style={{ fontSize: 30, fontWeight: 700, marginTop: 8 }}>{filtered.length}</div>
           </article>
           <article className="card kpi-card">
-            <div style={{ color: "var(--text-muted)", fontSize: 12, letterSpacing: "0.04em", textTransform: "uppercase" }}>Error Events</div>
+            <div style={{ color: "var(--text-muted)", fontSize: 12, letterSpacing: "0.04em", textTransform: "uppercase" }}>{t("logs.errorEvents")}</div>
             <div style={{ fontSize: 30, fontWeight: 700, marginTop: 8 }}>{errors.length}</div>
           </article>
           <article className="card kpi-card">
-            <div style={{ color: "var(--text-muted)", fontSize: 12, letterSpacing: "0.04em", textTransform: "uppercase" }}>Filter State</div>
-            <div style={{ marginTop: 12 }}>{level || text ? "Filtered" : "All logs"}</div>
+            <div style={{ color: "var(--text-muted)", fontSize: 12, letterSpacing: "0.04em", textTransform: "uppercase" }}>{t("logs.filterState")}</div>
+            <div style={{ marginTop: 12 }}>{level || text ? t("logs.filtered") : t("logs.allLogs")}</div>
           </article>
         </section>
       ) : null}
       <div className="grid-2">
         <section className="card">
           <div style={{ display: "flex", gap: 8, marginBottom: 10, flexWrap: "wrap" }}>
-            <input className="input" placeholder="Filter text" value={text} onChange={(e) => setText(e.target.value)} />
+            <input className="input" placeholder={t("logs.filterText")} value={text} onChange={(e) => setText(e.target.value)} />
             <select className="select" value={level} onChange={(e) => setLevel(e.target.value)}>
-              <option value="">All levels</option>
+              <option value="">{t("logs.allLevels")}</option>
               <option value="INFO">INFO</option>
               <option value="WARN">WARN</option>
               <option value="ERROR">ERROR</option>
@@ -82,7 +84,7 @@ export function LiveLogsPage() {
             </select>
           </div>
           <div style={{ maxHeight: 560, overflow: "auto" }}>
-            {containerId && filtered.length === 0 ? <div className="empty-state">No log lines match the current stream yet. If the service is quiet, keep the socket open or relax the active filters.</div> : null}
+            {containerId && filtered.length === 0 ? <div className="empty-state">{t("logs.noLinesYet")}</div> : null}
             {filtered.map((line, idx) => (
               <div key={`${line.ts}-${idx}`} className={`log-row log-${line.payload.level ?? "INFO"}`}>
                 [{line.ts}] {line.payload.level ?? "-"} {line.payload.message}
@@ -91,8 +93,8 @@ export function LiveLogsPage() {
           </div>
         </section>
         <section className="card">
-          <h3 style={{ marginTop: 0 }}>Latest Error Event</h3>
-          {!latestError ? <div style={{ color: "var(--text-muted)" }}>No structured errors have been detected in this stream yet.</div> : null}
+          <h3 style={{ marginTop: 0 }}>{t("logs.latestError")}</h3>
+          {!latestError ? <div style={{ color: "var(--text-muted)" }}>{t("logs.noStructuredErrors")}</div> : null}
           {latestError ? (
             <div>
               <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap", alignItems: "center" }}>
@@ -101,8 +103,8 @@ export function LiveLogsPage() {
               </div>
               <div style={{ marginTop: 8 }}>{latestError.payload.message}</div>
               <div style={{ marginTop: 10, color: "var(--text-muted)", fontSize: 13 }}>
-                Event time: {new Date(latestError.payload.eventTime).toLocaleString()}
-                {latestError.payload.traceId ? ` • traceId: ${latestError.payload.traceId}` : " • no traceId"}
+                {t("common.eventTime")}: {new Date(latestError.payload.eventTime).toLocaleString()}
+                {latestError.payload.traceId ? ` • traceId: ${latestError.payload.traceId}` : ` • ${t("common.noTraceId")}`}
               </div>
               <pre style={{ marginTop: 10, whiteSpace: "pre-wrap", fontSize: 12, color: "var(--text-muted)" }}>
                 {(latestError.payload.topFrames ?? []).join("\n")}

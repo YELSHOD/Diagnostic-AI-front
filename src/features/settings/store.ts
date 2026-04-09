@@ -1,4 +1,5 @@
 ﻿import { create } from "zustand";
+import type { Locale } from "@shared/i18n/messages";
 
 type Theme = "dark" | "light";
 
@@ -8,11 +9,13 @@ type SettingsState = {
   reconnectMinMs: number;
   reconnectMaxMs: number;
   theme: Theme;
+  locale: Locale;
   setApiBaseUrl: (v: string) => void;
   setWsBaseUrl: (v: string) => void;
   setReconnectMinMs: (v: number) => void;
   setReconnectMaxMs: (v: number) => void;
   setTheme: (v: Theme) => void;
+  setLocale: (v: Locale) => void;
   resetDefaults: () => void;
 };
 
@@ -22,7 +25,8 @@ const defaults = {
   wsBaseUrl: import.meta.env.VITE_WS_BASE_URL ?? "ws://localhost:8080",
   reconnectMinMs: 800,
   reconnectMaxMs: 10_000,
-  theme: "dark" as Theme
+  theme: "dark" as Theme,
+  locale: "ru" as Locale
 };
 
 function load() {
@@ -41,6 +45,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   reconnectMinMs: initial.reconnectMinMs ?? defaults.reconnectMinMs,
   reconnectMaxMs: initial.reconnectMaxMs ?? defaults.reconnectMaxMs,
   theme: initial.theme ?? defaults.theme,
+  locale: initial.locale ?? defaults.locale,
   setApiBaseUrl: (apiBaseUrl) => set((state) => persist({ ...state, apiBaseUrl })),
   setWsBaseUrl: (wsBaseUrl) => set((state) => persist({ ...state, wsBaseUrl })),
   setReconnectMinMs: (reconnectMinMs) => set((state) => persist({ ...state, reconnectMinMs })),
@@ -49,8 +54,13 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     document.documentElement.setAttribute("data-theme", theme);
     set((state) => persist({ ...state, theme }));
   },
+  setLocale: (locale) => {
+    document.documentElement.lang = locale;
+    set((state) => persist({ ...state, locale }));
+  },
   resetDefaults: () => {
     document.documentElement.setAttribute("data-theme", defaults.theme);
+    document.documentElement.lang = defaults.locale;
     set(() => persist({ ...defaults }));
   }
 }));
