@@ -1,7 +1,9 @@
 ﻿import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
 import { useAnalytics } from "@entities/analytics/api";
 import { useContainers } from "@entities/container/api";
 import { KpiCard } from "@shared/ui/KpiCard";
+import { PageIntro } from "@shared/ui/PageIntro";
 import { LineChart } from "@widgets/LineChart";
 
 export function OverviewPage() {
@@ -16,8 +18,15 @@ export function OverviewPage() {
 
   return (
     <div>
+      <PageIntro
+        title="Overview"
+        description="Start here to see current container activity, recent error volume, and the exception patterns your backend is already surfacing."
+        actions={<Link className="button" to="/containers">Open Containers</Link>}
+      />
       <div className="topbar">
-        <h1 style={{ margin: 0 }}>Overview</h1>
+        <div style={{ color: "var(--text-muted)", fontSize: 14 }}>
+          Current window: last 60 minutes
+        </div>
         <input className="input" placeholder="Service filter" value={service} onChange={(e) => setService(e.target.value)} />
       </div>
       <div className="grid-3">
@@ -25,6 +34,15 @@ export function OverviewPage() {
         <KpiCard title="Unique Exception Types" value={analytics.data?.topExceptionTypes.length ?? 0} />
         <KpiCard title="Active Containers" value={containers.data?.length ?? 0} />
       </div>
+      {analytics.isLoading ? <section className="card" style={{ marginTop: 16 }}>Loading analytics...</section> : null}
+      {analytics.error ? <section className="card" style={{ marginTop: 16, color: "var(--danger)" }}>Failed to load analytics.</section> : null}
+      {containers.isLoading ? <section className="card" style={{ marginTop: 16 }}>Loading containers...</section> : null}
+      {containers.error ? <section className="card" style={{ marginTop: 16, color: "var(--danger)" }}>Failed to load containers.</section> : null}
+      {!analytics.isLoading && !analytics.error && errors.length === 0 ? (
+        <section className="card" style={{ marginTop: 16 }}>
+          No recent error activity for the selected window.
+        </section>
+      ) : null}
       <div style={{ marginTop: 16 }}>
         <LineChart title="Errors per minute" points={errors.map((e) => ({ x: e.bucket, y: e.count }))} />
       </div>

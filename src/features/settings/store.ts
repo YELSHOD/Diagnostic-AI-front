@@ -13,9 +13,17 @@ type SettingsState = {
   setReconnectMinMs: (v: number) => void;
   setReconnectMaxMs: (v: number) => void;
   setTheme: (v: Theme) => void;
+  resetDefaults: () => void;
 };
 
 const KEY = "diagnostic-ui-settings";
+const defaults = {
+  apiBaseUrl: import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080",
+  wsBaseUrl: import.meta.env.VITE_WS_BASE_URL ?? "ws://localhost:8080",
+  reconnectMinMs: 800,
+  reconnectMaxMs: 10_000,
+  theme: "dark" as Theme
+};
 
 function load() {
   try {
@@ -28,11 +36,11 @@ function load() {
 const initial = load();
 
 export const useSettingsStore = create<SettingsState>((set) => ({
-  apiBaseUrl: initial.apiBaseUrl ?? (import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080"),
-  wsBaseUrl: initial.wsBaseUrl ?? (import.meta.env.VITE_WS_BASE_URL ?? "ws://localhost:8080"),
-  reconnectMinMs: initial.reconnectMinMs ?? 800,
-  reconnectMaxMs: initial.reconnectMaxMs ?? 10_000,
-  theme: initial.theme ?? "dark",
+  apiBaseUrl: initial.apiBaseUrl ?? defaults.apiBaseUrl,
+  wsBaseUrl: initial.wsBaseUrl ?? defaults.wsBaseUrl,
+  reconnectMinMs: initial.reconnectMinMs ?? defaults.reconnectMinMs,
+  reconnectMaxMs: initial.reconnectMaxMs ?? defaults.reconnectMaxMs,
+  theme: initial.theme ?? defaults.theme,
   setApiBaseUrl: (apiBaseUrl) => set((state) => persist({ ...state, apiBaseUrl })),
   setWsBaseUrl: (wsBaseUrl) => set((state) => persist({ ...state, wsBaseUrl })),
   setReconnectMinMs: (reconnectMinMs) => set((state) => persist({ ...state, reconnectMinMs })),
@@ -40,6 +48,10 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   setTheme: (theme) => {
     document.documentElement.setAttribute("data-theme", theme);
     set((state) => persist({ ...state, theme }));
+  },
+  resetDefaults: () => {
+    document.documentElement.setAttribute("data-theme", defaults.theme);
+    set(() => persist({ ...defaults }));
   }
 }));
 

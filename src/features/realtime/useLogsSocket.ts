@@ -11,11 +11,18 @@ type Opts = {
 
 export function useLogsSocket({ containerId, wsBaseUrl, reconnectMinMs = 800, reconnectMaxMs = 10000 }: Opts) {
   const setConnected = useRealtimeStore((s) => s.setConnected);
+  const setContainer = useRealtimeStore((s) => s.setContainer);
   const pushLog = useRealtimeStore((s) => s.pushLog);
   const pushError = useRealtimeStore((s) => s.pushError);
   const applyClusterUpdate = useRealtimeStore((s) => s.applyClusterUpdate);
+  const clearStream = useRealtimeStore((s) => s.clearStream);
 
   const attempts = useRef(0);
+
+  useEffect(() => {
+    setContainer(containerId);
+    clearStream();
+  }, [containerId, setContainer, clearStream]);
 
   useEffect(() => {
     if (!containerId) return;

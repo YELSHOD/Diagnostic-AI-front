@@ -1,5 +1,6 @@
 ﻿import { Link } from "react-router-dom";
 import { useContainers } from "@entities/container/api";
+import { PageIntro } from "@shared/ui/PageIntro";
 import { fmtDate } from "@shared/lib/time";
 
 export function ContainersPage() {
@@ -7,10 +8,16 @@ export function ContainersPage() {
 
   return (
     <div>
-      <div className="topbar"><h1 style={{ margin: 0 }}>Containers</h1></div>
+      <PageIntro
+        title="Containers"
+        description="Choose the running service you want to inspect. This page is the handoff point into the live log stream."
+      />
       <section className="card">
         {isLoading ? <div>Loading containers...</div> : null}
         {error ? <div style={{ color: "var(--danger)" }}>Failed to load containers.</div> : null}
+        {!isLoading && !error && (data?.length ?? 0) === 0 ? (
+          <div>No matching containers are visible from the backend right now.</div>
+        ) : null}
         <table className="table">
           <thead>
             <tr><th>Name</th><th>Image</th><th>Status</th><th>Created</th><th></th></tr>

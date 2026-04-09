@@ -3,6 +3,7 @@ import { useSearchParams } from "react-router-dom";
 import { useLogsSocket } from "@features/realtime/useLogsSocket";
 import { useRealtimeStore } from "@features/realtime/store";
 import { useSettingsStore } from "@features/settings/store";
+import { PageIntro } from "@shared/ui/PageIntro";
 
 export function LiveLogsPage() {
   const [params] = useSearchParams();
@@ -32,8 +33,16 @@ export function LiveLogsPage() {
 
   return (
     <div>
+      <PageIntro
+        title="Live Logs"
+        description={containerId
+          ? "Watch the selected container in real time and inspect the latest structured error event."
+          : "Pick a container first, then this page becomes the primary live investigation screen."}
+      />
       <div className="topbar">
-        <h1 style={{ margin: 0 }}>Live Logs</h1>
+        <div style={{ color: "var(--text-muted)", fontSize: 14 }}>
+          {containerId ? `Selected container: ${containerId}` : "No container selected"}
+        </div>
         <div>
           <span className="badge" style={{ borderColor: connected ? "var(--ok)" : "var(--danger)" }}>
             {connected ? "Connected" : "Disconnected"}
