@@ -17,7 +17,14 @@ export function ShellLayout({ children }: Props) {
   return (
     <div className="shell">
       <aside className="sidebar">
-        <h2 style={{ marginTop: 0, marginBottom: 18 }}>Diagnostic AI</h2>
+        <div className="sidebar-hero">
+          <div className="sidebar-kicker">Local Observability Workspace</div>
+          <h2 style={{ marginTop: 10, marginBottom: 10 }}>Diagnostic AI</h2>
+          <p className="sidebar-copy">
+            Watch local services, inspect live logs, and track cluster activity from one product shell.
+          </p>
+        </div>
+        <div className="sidebar-section">Monitoring Flow</div>
         <nav style={{ display: "grid", gap: 8 }}>
           {items.map(([to, label]) => (
             <NavLink
@@ -36,6 +43,9 @@ export function ShellLayout({ children }: Props) {
         </nav>
         <div style={{ marginTop: 20 }}>
           <SettingsPanel compact />
+        </div>
+        <div className="sidebar-footer">
+          Demo-ready MVP aligned to the current backend contracts.
         </div>
       </aside>
       <main className="main">{children}</main>

@@ -34,8 +34,11 @@
 
 body {
   margin: 0;
-  font-family: "Segoe UI", "Helvetica Neue", sans-serif;
-  background: radial-gradient(circle at 12% 8%, #17305f 0%, var(--bg) 44%);
+  font-family: "IBM Plex Sans", "Segoe UI", "Helvetica Neue", sans-serif;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(46, 197, 182, 0.12) 0%, transparent 28%),
+    radial-gradient(circle at 84% 12%, rgba(61, 120, 255, 0.16) 0%, transparent 30%),
+    linear-gradient(180deg, #08111d 0%, var(--bg) 44%);
   color: var(--text);
 }
 
@@ -54,6 +57,39 @@ a {
   border-right: 1px solid var(--border);
   background: color-mix(in srgb, var(--bg-soft) 88%, #0b111d 12%);
   padding: 24px 16px;
+}
+
+.sidebar-hero {
+  padding: 2px 4px 14px;
+}
+
+.sidebar-kicker,
+.sidebar-section {
+  color: var(--text-muted);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.sidebar-copy {
+  margin: 0;
+  color: var(--text-muted);
+  line-height: 1.45;
+}
+
+.sidebar-section {
+  margin-bottom: 10px;
+}
+
+.sidebar-footer {
+  margin-top: 18px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.45;
+  background: color-mix(in srgb, var(--bg-soft) 90%, transparent);
 }
 
 .main {
@@ -84,6 +120,17 @@ a {
   border: 1px solid var(--border);
   border-radius: 14px;
   padding: 14px;
+  box-shadow: 0 18px 48px rgba(3, 8, 18, 0.22);
+  backdrop-filter: blur(10px);
+}
+
+.kpi-card {
+  min-height: 126px;
+}
+
+.empty-state {
+  color: var(--text-muted);
+  line-height: 1.5;
 }
 
 .table {
@@ -125,6 +172,10 @@ a {
 
 .button:hover {
   transform: translateY(-1px);
+}
+
+.button.secondary {
+  background: transparent;
 }
 
 .log-row {

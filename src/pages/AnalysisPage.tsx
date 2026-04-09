@@ -15,24 +15,30 @@ export function AnalysisPage() {
       <PageIntro
         title="Analysis"
         description="This MVP analysis view is intentionally backed by the realtime cluster updates already emitted from the backend. It helps you inspect what the stream has surfaced without pretending there are richer incident endpoints yet."
-        actions={<Link className="button" to="/logs">Open Live Logs</Link>}
+        actions={<div style={{ display: "flex", gap: 8 }}><Link className="button" to="/logs">Open Live Logs</Link><Link className="button secondary" to="/containers">Choose Service</Link></div>}
       />
       <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, marginBottom: 16 }}>
-        <article className="card">
-          <div style={{ color: "var(--text-muted)", fontSize: 13 }}>Tracked Clusters</div>
+        <article className="card kpi-card">
+          <div style={{ color: "var(--text-muted)", fontSize: 12, letterSpacing: "0.04em", textTransform: "uppercase" }}>Tracked Clusters</div>
           <div style={{ fontSize: 30, fontWeight: 700, marginTop: 8 }}>{totalClusters}</div>
         </article>
-        <article className="card">
-          <div style={{ color: "var(--text-muted)", fontSize: 13 }}>Cluster Events</div>
+        <article className="card kpi-card">
+          <div style={{ color: "var(--text-muted)", fontSize: 12, letterSpacing: "0.04em", textTransform: "uppercase" }}>Cluster Events</div>
           <div style={{ fontSize: 30, fontWeight: 700, marginTop: 8 }}>{totalEvents}</div>
         </article>
-        <article className="card">
-          <div style={{ color: "var(--text-muted)", fontSize: 13 }}>Marked New</div>
+        <article className="card kpi-card">
+          <div style={{ color: "var(--text-muted)", fontSize: 12, letterSpacing: "0.04em", textTransform: "uppercase" }}>Marked New</div>
           <div style={{ fontSize: 30, fontWeight: 700, marginTop: 8 }}>{newClusters}</div>
         </article>
       </section>
+      <section className="card" style={{ marginBottom: 16 }}>
+        <div style={{ fontSize: 12, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.04em" }}>Read Model Note</div>
+        <div style={{ marginTop: 6, maxWidth: 760 }}>
+          This page summarizes the cluster picture currently built from websocket updates. It is useful for demos and short investigations, but it is not yet a persisted incidents explorer.
+        </div>
+      </section>
       {rows.length === 0 ? (
-        <section className="card">
+        <section className="card empty-state">
           <h3 style={{ marginTop: 0 }}>No cluster updates yet</h3>
           <p style={{ margin: "8px 0 0", color: "var(--text-muted)", maxWidth: 720 }}>
             Open a container in Live Logs and keep the websocket stream running. This page fills from realtime
@@ -41,6 +47,9 @@ export function AnalysisPage() {
         </section>
       ) : (
       <section className="card">
+        <div style={{ marginBottom: 14, color: "var(--text-muted)" }}>
+          Highest-volume clusters seen in the current client session.
+        </div>
         <table className="table">
           <thead>
             <tr><th>Cluster Key</th><th>Service</th><th>Count</th><th>New</th><th>First Seen</th><th>Last Seen</th></tr>

@@ -10,7 +10,7 @@ export function AiChatPage() {
         actions={<Link className="button secondary" to="/analysis">Back To Analysis</Link>}
       />
       <section className="card" style={{ minHeight: 420, display: "grid", alignContent: "start", gap: 18 }}>
-        <div>
+        <div style={{ display: "grid", gap: 12 }}>
           <div style={{ display: "inline-flex", padding: "6px 10px", borderRadius: 999, border: "1px solid var(--border)", color: "var(--text-muted)", fontSize: 12, letterSpacing: "0.04em", textTransform: "uppercase" }}>
             Planned Feature
           </div>
@@ -18,6 +18,9 @@ export function AiChatPage() {
           <p style={{ margin: 0, color: "var(--text-muted)", maxWidth: 760 }}>
             The future chat assistant will answer questions about cluster spikes, error traces, service health, and AI diagnoses once the backend exposes persisted incidents and a chat endpoint.
           </p>
+          <div className="card" style={{ background: "color-mix(in srgb, var(--bg-soft) 92%, transparent)", maxWidth: 760 }}>
+            For the dissertation story, this page already signals the AI direction of the product without misrepresenting the current backend scope.
+          </div>
         </div>
         <div style={{ display: "grid", gap: 12 }}>
           <div className="card" style={{ background: "var(--bg-soft)" }}>
