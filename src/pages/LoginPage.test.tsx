@@ -60,5 +60,7 @@ describe("LoginPage", () => {
     expect(screen.getByText(/Diagnostic AI/i)).toBeInTheDocument();
     expect(screen.getByText(/One local workspace for logs, runtime health, and investigation/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /register/i })).toBeInTheDocument();
+    expect(screen.getByLabelText(/email or username/i)).toBeVisible();
+    expect(screen.getByLabelText(/password/i)).toBeVisible();
   });
 });
