@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { AccountPage } from "@pages/AccountPage";
 import { useAuthStore } from "@features/auth/store";
+import { useSettingsStore } from "@features/settings/store";
 
 vi.mock("@features/auth/api", () => ({
   getAccount: vi.fn(),
@@ -16,6 +17,7 @@ import { changePassword, getAccount, updateAccount } from "@features/auth/api";
 describe("AccountPage", () => {
   beforeEach(() => {
     useAuthStore.getState().clearSession();
+    useSettingsStore.getState().setLocale("en");
     useAuthStore.getState().setSession({
       accessToken: "access-token",
       refreshToken: "refresh-token",

@@ -3,6 +3,8 @@
 @tailwind utilities;
 
 :root {
+  --font-ui: "Avenir Next", "Manrope", "IBM Plex Sans", "Segoe UI", sans-serif;
+  --font-display: "Sora", "Avenir Next", "Space Grotesk", "IBM Plex Sans", sans-serif;
   --bg: #070c14;
   --bg-soft: #0f1726;
   --card: #131f32;
@@ -34,7 +36,7 @@
 
 body {
   margin: 0;
-  font-family: "IBM Plex Sans", "Segoe UI", "Helvetica Neue", sans-serif;
+  font-family: var(--font-ui);
   background:
     radial-gradient(circle at 12% 8%, rgba(46, 197, 182, 0.12) 0%, transparent 28%),
     radial-gradient(circle at 84% 12%, rgba(61, 120, 255, 0.16) 0%, transparent 30%),
@@ -493,9 +495,10 @@ a {
 }
 
 .auth-brand-mark {
+  font-family: var(--font-display);
   font-size: 24px;
   font-weight: 700;
-  letter-spacing: -0.04em;
+  letter-spacing: -0.05em;
 }
 
 .auth-brand-copy {
@@ -566,11 +569,12 @@ a {
 }
 
 .auth-landing-title {
+  font-family: var(--font-display);
   margin: 14px 0 0;
   max-width: 11ch;
-  font-size: clamp(48px, 7vw, 84px);
-  line-height: 0.92;
-  letter-spacing: -0.065em;
+  font-size: clamp(44px, 6.2vw, 78px);
+  line-height: 0.96;
+  letter-spacing: -0.055em;
   text-wrap: balance;
 }
 
@@ -578,8 +582,8 @@ a {
   margin: 22px 0 0;
   max-width: 62ch;
   color: var(--text-muted);
-  font-size: 16px;
-  line-height: 1.72;
+  font-size: 17px;
+  line-height: 1.76;
 }
 
 .auth-landing-support {
@@ -762,9 +766,10 @@ a {
 
 .auth-card-title,
 .auth-section-title {
+  font-family: var(--font-display);
   font-size: 22px;
-  font-weight: 700;
-  letter-spacing: -0.03em;
+  font-weight: 650;
+  letter-spacing: -0.035em;
 }
 
 .auth-card-copy,

@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { RegisterPage } from "@pages/RegisterPage";
 import { useAuthStore } from "@features/auth/store";
+import { useSettingsStore } from "@features/settings/store";
 
 vi.mock("@features/auth/api", () => ({
   register: vi.fn()
@@ -14,6 +15,7 @@ import { register } from "@features/auth/api";
 describe("RegisterPage", () => {
   beforeEach(() => {
     useAuthStore.getState().clearSession();
+    useSettingsStore.getState().setLocale("en");
     vi.mocked(register).mockReset();
   });
 
@@ -63,6 +65,6 @@ describe("RegisterPage", () => {
 
     expect(screen.getByText(/Create access for your observability workspace/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /login/i })).toBeInTheDocument();
-    expect(screen.getByText(/Choose your role once and keep the rest of the workflow simple/i)).toBeInTheDocument();
+    expect(screen.getByText(/Choose your role once and keep the rest of the flow simple/i)).toBeInTheDocument();
   });
 });

@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { LocaleSwitcher } from "@features/settings/LocaleSwitcher";
 import { ThemeToggle } from "@features/settings/ThemeToggle";
+import { useI18n } from "@shared/i18n/useI18n";
 
 type AuthLandingProps = {
   mode: "login" | "register" | "account";
@@ -22,24 +23,26 @@ export function AuthLanding({
   supportingPoints,
   children
 }: AuthLandingProps) {
+  const { t } = useI18n();
+
   return (
     <div className="auth-landing">
       <header className="auth-landing-header">
         <Link className="auth-brand" to="/login">
           <span className="auth-brand-mark">Diagnostic AI</span>
-          <span className="auth-brand-copy">Local observability workspace</span>
+          <span className="auth-brand-copy">{t("auth.brandCopy")}</span>
         </Link>
         <div className="auth-landing-actions">
           <nav className="auth-landing-nav" aria-label="Authentication pages">
             <Link className={`auth-nav-link${mode === "login" ? " active" : ""}`} to="/login">
-              Login
+              {t("auth.navLogin")}
             </Link>
             <Link className={`auth-nav-link${mode === "register" ? " active" : ""}`} to="/register">
-              Register
+              {t("auth.navRegister")}
             </Link>
             {mode === "account" ? (
               <Link className="auth-nav-link active" to="/account">
-                Account
+                {t("auth.navAccount")}
               </Link>
             ) : null}
           </nav>

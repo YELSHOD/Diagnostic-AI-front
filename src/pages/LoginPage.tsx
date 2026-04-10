@@ -2,11 +2,13 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "@features/auth/api";
 import { useAuthStore } from "@features/auth/store";
+import { useI18n } from "@shared/i18n/useI18n";
 import { AuthLanding } from "@shared/ui/AuthLanding";
 
 export function LoginPage() {
   const navigate = useNavigate();
   const setSession = useAuthStore((state) => state.setSession);
+  const { t } = useI18n();
   const [form, setForm] = useState({
     login: "",
     password: ""
@@ -27,7 +29,7 @@ export function LoginPage() {
       });
       navigate("/overview");
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
+      setError(err instanceof Error ? err.message : t("auth.login.failed"));
     } finally {
       setSubmitting(false);
     }
@@ -37,25 +39,25 @@ export function LoginPage() {
     <div className="page auth-page">
       <AuthLanding
         mode="login"
-        eyebrow="Secure access"
-        title="One local workspace for logs, runtime health, and investigation"
-        description="Open the platform from one clean entry point, watch your local services, and continue cluster analysis without turning the login screen into a separate product."
-        supportingTitle="What opens after sign in"
+        eyebrow={t("auth.login.eyebrow")}
+        title={t("auth.login.title")}
+        description={t("auth.login.description")}
+        supportingTitle={t("auth.login.supportingTitle")}
         supportingPoints={[
-          "Live logs, containers, analytics, and investigation in one shell",
-          "Protected access for REST and WebSocket flows through the same session",
-          "A cleaner product entry that feels like a landing page, not a dashboard split into tiles"
+          t("auth.login.point1"),
+          t("auth.login.point2"),
+          t("auth.login.point3")
         ]}
       >
         <form className="card auth-card auth-landing-card" onSubmit={handleSubmit}>
           <div className="auth-card-header">
-            <div className="auth-card-title">Login</div>
-            <div className="auth-card-copy">Enter your workspace credentials and continue where you left off.</div>
+            <div className="auth-card-title">{t("auth.login.cardTitle")}</div>
+            <div className="auth-card-copy">{t("auth.login.cardCopy")}</div>
           </div>
           <label className="field">
-            <span>Email or username</span>
+            <span>{t("auth.login.loginField")}</span>
             <input
-              aria-label="Email or username"
+              aria-label={t("auth.login.loginField")}
               className="input"
               placeholder="dev.user"
               value={form.login}
@@ -63,9 +65,9 @@ export function LoginPage() {
             />
           </label>
           <label className="field">
-            <span>Password</span>
+            <span>{t("auth.login.passwordField")}</span>
             <input
-              aria-label="Password"
+              aria-label={t("auth.login.passwordField")}
               className="input"
               type="password"
               placeholder="••••••••"
@@ -75,10 +77,10 @@ export function LoginPage() {
           </label>
           {error ? <div className="card auth-inline-alert" role="alert">{error}</div> : null}
           <button className="button auth-submit" type="submit" disabled={submitting}>
-            {submitting ? "Signing in..." : "Login"}
+            {submitting ? t("auth.login.submitting") : t("auth.login.submit")}
           </button>
           <p className="auth-switch">
-            New here? <Link to="/register">Create an account</Link>
+            {t("auth.login.switchPrompt")} <Link to="/register">{t("auth.login.switchLink")}</Link>
           </p>
         </form>
       </AuthLanding>

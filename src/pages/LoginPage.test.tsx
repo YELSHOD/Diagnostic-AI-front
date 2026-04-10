@@ -4,6 +4,7 @@ import { MemoryRouter } from "react-router-dom";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { LoginPage } from "@pages/LoginPage";
 import { useAuthStore } from "@features/auth/store";
+import { useSettingsStore } from "@features/settings/store";
 
 vi.mock("@features/auth/api", () => ({
   login: vi.fn()
@@ -14,6 +15,7 @@ import { login } from "@features/auth/api";
 describe("LoginPage", () => {
   beforeEach(() => {
     useAuthStore.getState().clearSession();
+    useSettingsStore.getState().setLocale("en");
     vi.mocked(login).mockReset();
   });
 
@@ -62,5 +64,18 @@ describe("LoginPage", () => {
     expect(screen.getByRole("link", { name: /register/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/email or username/i)).toBeVisible();
     expect(screen.getByLabelText(/password/i)).toBeVisible();
+  });
+
+  it("renders localized auth copy", () => {
+    useSettingsStore.getState().setLocale("ru");
+
+    render(
+      <MemoryRouter>
+        <LoginPage />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Единое локальное пространство для логов/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Регистрация/i })).toBeInTheDocument();
   });
 });

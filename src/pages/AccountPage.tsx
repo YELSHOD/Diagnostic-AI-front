@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { changePassword, getAccount, updateAccount } from "@features/auth/api";
 import { useAuthStore } from "@features/auth/store";
+import { useI18n } from "@shared/i18n/useI18n";
 import { AuthLanding } from "@shared/ui/AuthLanding";
 
 export function AccountPage() {
   const setCurrentUser = useAuthStore((state) => state.setCurrentUser);
+  const { t } = useI18n();
   const [profile, setProfile] = useState({
     email: "",
     username: ""
@@ -31,7 +33,7 @@ export function AccountPage() {
       })
       .catch((err) => {
         if (!active) return;
-        setError(err instanceof Error ? err.message : "Failed to load account");
+        setError(err instanceof Error ? err.message : t("auth.account.loadFailed"));
       })
       .finally(() => {
         if (active) setLoading(false);
@@ -54,7 +56,7 @@ export function AccountPage() {
       });
       setCurrentUser(account);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to update account");
+      setError(err instanceof Error ? err.message : t("auth.account.updateFailed"));
     } finally {
       setSavingProfile(false);
     }
@@ -71,7 +73,7 @@ export function AccountPage() {
         newPassword: ""
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Failed to change password");
+      setError(err instanceof Error ? err.message : t("auth.account.passwordFailed"));
     } finally {
       setSavingPassword(false);
     }
@@ -81,27 +83,27 @@ export function AccountPage() {
     <div className="page auth-page">
       <AuthLanding
         mode="account"
-        eyebrow="Authenticated workspace"
-        title="Manage workspace identity and security from one place"
-        description="Keep account data, role context, and password updates inside the same product surface, so the credentials area feels like part of the platform instead of an isolated settings page."
-        supportingTitle="What stays here"
+        eyebrow={t("auth.account.eyebrow")}
+        title={t("auth.account.title")}
+        description={t("auth.account.description")}
+        supportingTitle={t("auth.account.supportingTitle")}
         supportingPoints={[
-          "Update the profile used across header, menus, and protected workflows",
-          "Rotate your password without leaving the observability product shell",
-          "Keep identity controls aligned with the same clean entry used for login and registration"
+          t("auth.account.point1"),
+          t("auth.account.point2"),
+          t("auth.account.point3")
         ]}
       >
         <div className="auth-account-grid">
           {error ? <section className="card auth-inline-alert" role="alert">{error}</section> : null}
           <form className="card auth-card auth-landing-card" onSubmit={submitProfile}>
             <div className="auth-section-header">
-              <div className="auth-section-title">Profile details</div>
-              <div className="auth-section-copy">Update the identity shown across the workspace shell and account menus.</div>
+              <div className="auth-section-title">{t("auth.account.profileTitle")}</div>
+              <div className="auth-section-copy">{t("auth.account.profileCopy")}</div>
             </div>
             <label className="field">
-              <span>Email</span>
+              <span>{t("auth.register.emailField")}</span>
               <input
-                aria-label="Email"
+                aria-label={t("auth.register.emailField")}
                 className="input"
                 value={profile.email}
                 onChange={(event) => setProfile((state) => ({ ...state, email: event.target.value }))}
@@ -109,9 +111,9 @@ export function AccountPage() {
               />
             </label>
             <label className="field">
-              <span>Username</span>
+              <span>{t("auth.register.usernameField")}</span>
               <input
-                aria-label="Username"
+                aria-label={t("auth.register.usernameField")}
                 className="input"
                 value={profile.username}
                 onChange={(event) => setProfile((state) => ({ ...state, username: event.target.value }))}
@@ -119,18 +121,18 @@ export function AccountPage() {
               />
             </label>
             <button className="button auth-submit" type="submit" disabled={loading || savingProfile}>
-              {savingProfile ? "Saving..." : "Save account"}
+              {savingProfile ? t("auth.account.saving") : t("auth.account.save")}
             </button>
           </form>
           <form className="card auth-card auth-landing-card" onSubmit={submitPassword}>
             <div className="auth-section-header">
-              <div className="auth-section-title">Password security</div>
-              <div className="auth-section-copy">Use a dedicated password update flow to keep the local workspace secure.</div>
+              <div className="auth-section-title">{t("auth.account.passwordTitle")}</div>
+              <div className="auth-section-copy">{t("auth.account.passwordCopy")}</div>
             </div>
             <label className="field">
-              <span>Current password</span>
+              <span>{t("auth.account.currentPassword")}</span>
               <input
-                aria-label="Current password"
+                aria-label={t("auth.account.currentPassword")}
                 className="input"
                 type="password"
                 value={passwordForm.currentPassword}
@@ -138,9 +140,9 @@ export function AccountPage() {
               />
             </label>
             <label className="field">
-              <span>New password</span>
+              <span>{t("auth.account.newPassword")}</span>
               <input
-                aria-label="New password"
+                aria-label={t("auth.account.newPassword")}
                 className="input"
                 type="password"
                 value={passwordForm.newPassword}
@@ -148,7 +150,7 @@ export function AccountPage() {
               />
             </label>
             <button className="button auth-submit" type="submit" disabled={savingPassword}>
-              {savingPassword ? "Updating..." : "Change password"}
+              {savingPassword ? t("auth.account.updatingPassword") : t("auth.account.changePassword")}
             </button>
           </form>
         </div>
