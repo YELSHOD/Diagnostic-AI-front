@@ -8,15 +8,20 @@ Completed:
 - localization added for `RU / KZ / EN`
 - sidebar collapse, theme toggle, header/footer, profile menu, and motion polish implemented
 - frontend build verified successfully during the current wave
+- frontend auth foundation implemented
+- protected/public routing added
+- `Login`, `Register`, and `Account / Учетные данные` pages implemented
+- auth session bootstrap through `/api/auth/me` added
+- websocket log stream now carries JWT token
+- logout now calls backend endpoint before clearing the session
 
 Next planned wave:
-- add real authentication flow connected to backend
-- replace placeholder profile menu state with backend-driven user identity
-- add `Login`, `Register`, and `Account / Учетные данные` pages
-- protect main routes behind session state
-- wire logout and current-user loading into header/profile menu
+- polish auth page visuals and localized copy
+- add better unauthorized/expired-session UX
+- improve chunk splitting to reduce the large bundle warning
+- continue product polish on overview/live-logs/analysis with the real authenticated flow in place
 
-Auth should now be treated as the next major frontend milestone after the demo-ready shell polish.
+Auth is now part of the implemented frontend baseline.
 
 ## Execution Principle
 Polish the existing MVP in-place. Do not invent new backend dependencies. Keep the current route map, but raise the product quality and presentation level.
@@ -72,21 +77,25 @@ Polish the existing MVP in-place. Do not invent new backend dependencies. Keep t
 ## Next Phase: Frontend Auth
 
 ### Task 9: Add auth state and token handling
+- Status: completed
 - store `accessToken`, `refreshToken`, `currentUser`, and auth status
 - attach bearer token to backend API requests
 - clear session when refresh fails
 
 ### Task 10: Add auth pages
+- Status: completed
 - `LoginPage`
 - `RegisterPage`
 - `AccountPage`
 
 ### Task 11: Protect routes
+- Status: completed
 - keep login/register public
 - protect the main shell routes
 - redirect unauthenticated users to login
 
 ### Task 12: Connect profile menu and account page
+- Status: completed
 - replace placeholder profile summary with backend user data
 - replace generic menu action with `Учетные данные`
 - support account update and password change
