@@ -53,4 +53,16 @@ describe("RegisterPage", () => {
       role: "BACKEND"
     });
   });
+
+  it("renders a landing-style registration page", () => {
+    render(
+      <MemoryRouter>
+        <RegisterPage />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Create access for your observability workspace/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /login/i })).toBeInTheDocument();
+    expect(screen.getByText(/Choose your role once and keep the rest of the workflow simple/i)).toBeInTheDocument();
+  });
 });

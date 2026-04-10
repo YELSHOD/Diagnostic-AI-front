@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { register } from "@features/auth/api";
 import { useAuthStore } from "@features/auth/store";
-import { AuthFrame } from "@shared/ui/AuthFrame";
+import { AuthLanding } from "@shared/ui/AuthLanding";
 
 export function RegisterPage() {
   const navigate = useNavigate();
@@ -37,22 +37,22 @@ export function RegisterPage() {
 
   return (
     <div className="page auth-page">
-      <AuthFrame
+      <AuthLanding
+        mode="register"
         eyebrow="Operator onboarding"
-        title="Create a secure operator profile for your local workspace"
-        description="Register once, choose your role, and keep observability, live logs, and diagnostics under one protected session."
-        panelTitle="Role-aware access"
-        panelBody="Your role becomes the first identity marker for the workspace, making the product feel structured from the start while staying simple for the MVP."
-        highlights={[
-          { value: "5", label: "Available roles" },
-          { value: "1", label: "Unified workspace" },
-          { value: "Fast", label: "Local setup" }
+        title="Create access for your observability workspace"
+        description="Register from the same landing surface, choose your role once, and keep the first-run experience clean instead of breaking it into decorative blocks."
+        supportingTitle="What this setup gives you"
+        supportingPoints={[
+          "Choose your role once and keep the rest of the workflow simple",
+          "Start with one protected identity for logs, analytics, and clusters",
+          "Keep login and registration inside one coherent product entry"
         ]}
       >
-        <form className="card auth-card auth-card-strong" onSubmit={handleSubmit}>
+        <form className="card auth-card auth-landing-card" onSubmit={handleSubmit}>
           <div className="auth-card-header">
-            <div className="auth-card-title">Create account</div>
-            <div className="auth-card-copy">Set up your credentials and role for the dissertation workspace.</div>
+            <div className="auth-card-title">Register</div>
+            <div className="auth-card-copy">Create your account and define the first role for this workspace.</div>
           </div>
           <label className="field">
             <span>Email</span>
@@ -108,7 +108,7 @@ export function RegisterPage() {
             Already have an account? <Link to="/login">Sign in</Link>
           </p>
         </form>
-      </AuthFrame>
+      </AuthLanding>
     </div>
   );
 }

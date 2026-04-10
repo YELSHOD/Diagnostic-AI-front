@@ -50,15 +50,15 @@ describe("LoginPage", () => {
     });
   });
 
-  it("renders a product-grade auth shell", () => {
+  it("renders a landing-style auth entry", () => {
     render(
       <MemoryRouter>
         <LoginPage />
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Local observability, ready for AI-assisted investigation/i)).toBeInTheDocument();
-    expect(screen.getByText(/Unified access to logs, clusters, analytics, and live investigation/i)).toBeInTheDocument();
-    expect(screen.getByText(/Workspace access/i)).toBeInTheDocument();
+    expect(screen.getByText(/Diagnostic AI/i)).toBeInTheDocument();
+    expect(screen.getByText(/One local workspace for logs, runtime health, and investigation/i)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /register/i })).toBeInTheDocument();
   });
 });

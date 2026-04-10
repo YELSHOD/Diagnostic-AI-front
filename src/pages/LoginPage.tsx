@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { login } from "@features/auth/api";
 import { useAuthStore } from "@features/auth/store";
-import { AuthFrame } from "@shared/ui/AuthFrame";
+import { AuthLanding } from "@shared/ui/AuthLanding";
 
 export function LoginPage() {
   const navigate = useNavigate();
@@ -35,22 +35,22 @@ export function LoginPage() {
 
   return (
     <div className="page auth-page">
-      <AuthFrame
-        eyebrow="Diagnostic AI"
-        title="Local observability, ready for AI-assisted investigation"
-        description="Unified access to logs, clusters, analytics, and live investigation across your local services."
-        panelTitle="Workspace access"
-        panelBody="Sign in to reopen your monitoring workspace, continue incident analysis, and resume live log investigation without losing context."
-        highlights={[
-          { value: "Live", label: "Realtime streams" },
-          { value: "JWT", label: "Protected session" },
-          { value: "AI", label: "Ready for diagnosis" }
+      <AuthLanding
+        mode="login"
+        eyebrow="Secure access"
+        title="One local workspace for logs, runtime health, and investigation"
+        description="Open the platform from one clean entry point, watch your local services, and continue cluster analysis without turning the login screen into a separate product."
+        supportingTitle="What opens after sign in"
+        supportingPoints={[
+          "Live logs, containers, analytics, and investigation in one shell",
+          "Protected access for REST and WebSocket flows through the same session",
+          "A cleaner product entry that feels like a landing page, not a dashboard split into tiles"
         ]}
       >
-        <form className="card auth-card auth-card-strong" onSubmit={handleSubmit}>
+        <form className="card auth-card auth-landing-card" onSubmit={handleSubmit}>
           <div className="auth-card-header">
-            <div className="auth-card-title">Sign in</div>
-            <div className="auth-card-copy">Use your account to enter the local observability workspace.</div>
+            <div className="auth-card-title">Login</div>
+            <div className="auth-card-copy">Enter your workspace credentials and continue where you left off.</div>
           </div>
           <label className="field">
             <span>Email or username</span>
@@ -81,7 +81,7 @@ export function LoginPage() {
             New here? <Link to="/register">Create an account</Link>
           </p>
         </form>
-      </AuthFrame>
+      </AuthLanding>
     </div>
   );
 }
