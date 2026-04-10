@@ -18,8 +18,29 @@ export function RegisterPage() {
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
+  function validate() {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(form.email.trim())) {
+      return t("auth.register.invalidEmail");
+    }
+    if (!/^[a-zA-Z0-9._-]+$/.test(form.username.trim())) {
+      return t("auth.register.invalidUsername");
+    }
+    if (form.password.length < 8) {
+      return t("auth.register.invalidPassword");
+    }
+    if (!form.role.trim()) {
+      return t("auth.register.roleRequired");
+    }
+    return null;
+  }
+
   async function handleSubmit(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    const validationError = validate();
+    if (validationError) {
+      setError(validationError);
+      return;
+    }
     setSubmitting(true);
     setError(null);
     try {

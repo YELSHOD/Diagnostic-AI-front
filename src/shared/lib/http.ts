@@ -20,7 +20,7 @@ export async function apiGet<T>(path: string, signal?: AbortSignal): Promise<T> 
     headers: authHeaders()
   });
   if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    throw new Error(await readErrorMessage(response));
   }
   return response.json() as Promise<T>;
 }
@@ -31,10 +31,11 @@ export async function apiRequest<T>(
     method?: "POST" | "PATCH" | "PUT" | "DELETE";
     body?: unknown;
     signal?: AbortSignal;
+    auth?: boolean;
   } = {}
 ): Promise<T> {
   const headers = {
-    ...authHeaders(),
+    ...(init.auth === false ? {} : authHeaders()),
     "Content-Type": "application/json"
   };
   const response = await fetch(`${runtimeApiBaseUrl()}${path}`, {
@@ -44,7 +45,7 @@ export async function apiRequest<T>(
     body: init.body === undefined ? undefined : JSON.stringify(init.body)
   });
   if (!response.ok) {
-    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+    throw new Error(await readErrorMessage(response));
   }
   return response.json() as Promise<T>;
 }
@@ -61,4 +62,36 @@ export function buildQuery(params: Record<string, string | undefined>): string {
 function authHeaders(): Record<string, string> {
   const { accessToken } = loadPersistedAuthState();
   return accessToken ? { Authorization: `Bearer ${accessToken}` } : {};
+}
+
+async function readErrorMessage(response: Response): Promise<string> {
+  const fallback = `HTTP ${response.status}: ${response.statusText}`;
+
+  try {
+    const payload = await response.clone().json() as {
+      message?: string;
+      detail?: string;
+      error?: string;
+      errors?: Array<{ defaultMessage?: string; message?: string }>;
+    };
+
+    if (payload.detail) return payload.detail;
+    if (payload.message) return payload.message;
+    if (payload.error && response.status < 500) return payload.error;
+    if (payload.errors?.length) {
+      const messages = payload.errors
+        .map((entry) => entry.defaultMessage ?? entry.message)
+        .filter(Boolean);
+      if (messages.length > 0) return messages.join(". ");
+    }
+  } catch {
+    try {
+      const text = (await response.text()).trim();
+      if (text) return text;
+    } catch {
+      return fallback;
+    }
+  }
+
+  return fallback;
 }

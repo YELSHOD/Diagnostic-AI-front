@@ -32,14 +32,16 @@ export type ChangePasswordPayload = {
 export function login(payload: LoginPayload) {
   return apiRequest<AuthResponse>("/api/auth/login", {
     method: "POST",
-    body: payload
+    body: payload,
+    auth: false
   });
 }
 
 export function register(payload: RegisterPayload) {
   return apiRequest<AuthResponse>("/api/auth/register", {
     method: "POST",
-    body: payload
+    body: payload,
+    auth: false
   });
 }
 

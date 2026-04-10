@@ -26,6 +26,8 @@ type AuthLandingProps = {
   description: string;
   supportingTitle: string;
   supportingPoints: string[];
+  showHeader?: boolean;
+  showFooter?: boolean;
   children: ReactNode;
 };
 
@@ -36,40 +38,44 @@ export function AuthLanding({
   description,
   supportingTitle,
   supportingPoints,
+  showHeader = true,
+  showFooter = true,
   children
 }: AuthLandingProps) {
   const { t } = useI18n();
 
   return (
     <div className="auth-landing">
-      <header className="auth-landing-header">
-        <Link className="auth-brand" to="/login">
-          <span className="auth-brand-row">
-            <BrandEmblem />
-            <span className="auth-brand-mark">Diagnostic AI</span>
-          </span>
-          <span className="auth-brand-copy">{t("auth.brandCopy")}</span>
-        </Link>
-        <div className="auth-landing-actions">
-          <nav className="auth-landing-nav" aria-label="Authentication pages">
-            <Link className={`auth-nav-link${mode === "login" ? " active" : ""}`} to="/login">
-              {t("auth.navLogin")}
-            </Link>
-            <Link className={`auth-nav-link${mode === "register" ? " active" : ""}`} to="/register">
-              {t("auth.navRegister")}
-            </Link>
-            {mode === "account" ? (
-              <Link className="auth-nav-link active" to="/account">
-                {t("auth.navAccount")}
+      {showHeader ? (
+        <header className="auth-landing-header">
+          <Link className="auth-brand" to="/login">
+            <span className="auth-brand-row">
+              <BrandEmblem />
+              <span className="auth-brand-mark">Diagnostic AI</span>
+            </span>
+            <span className="auth-brand-copy">{t("auth.brandCopy")}</span>
+          </Link>
+          <div className="auth-landing-actions">
+            <nav className="auth-landing-nav" aria-label="Authentication pages">
+              <Link className={`auth-nav-link${mode === "login" ? " active" : ""}`} to="/login">
+                {t("auth.navLogin")}
               </Link>
-            ) : null}
-          </nav>
-          <div className="auth-landing-tools">
-            <LocaleSwitcher compact />
-            <ThemeToggle />
+              <Link className={`auth-nav-link${mode === "register" ? " active" : ""}`} to="/register">
+                {t("auth.navRegister")}
+              </Link>
+              {mode === "account" ? (
+                <Link className="auth-nav-link active" to="/account">
+                  {t("auth.navAccount")}
+                </Link>
+              ) : null}
+            </nav>
+            <div className="auth-landing-tools">
+              <LocaleSwitcher compact />
+              <ThemeToggle />
+            </div>
           </div>
-        </div>
-      </header>
+        </header>
+      ) : null}
 
       <main className="auth-landing-main">
         <section className="auth-landing-copy">
@@ -90,13 +96,15 @@ export function AuthLanding({
         <section className="auth-landing-form">{children}</section>
       </main>
 
-      <footer className="auth-landing-footer">
-        <div className="auth-landing-footer-mark">Diagnostic AI</div>
-        <div className="auth-landing-footer-copy">
-          <span>{t("auth.footerLead")}</span>
-          <span>{t("auth.footerMeta")}</span>
-        </div>
-      </footer>
+      {showFooter ? (
+        <footer className="auth-landing-footer">
+          <div className="auth-landing-footer-mark">Diagnostic AI</div>
+          <div className="auth-landing-footer-copy">
+            <span>{t("auth.footerLead")}</span>
+            <span>{t("auth.footerMeta")}</span>
+          </div>
+        </footer>
+      ) : null}
     </div>
   );
 }

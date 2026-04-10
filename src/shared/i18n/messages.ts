@@ -177,7 +177,9 @@ export const messages = {
         submitting: "Вход...",
         switchPrompt: "Впервые здесь?",
         switchLink: "Создать аккаунт",
-        failed: "Не удалось выполнить вход"
+        failed: "Не удалось выполнить вход",
+        loginRequired: "Укажи email или username.",
+        passwordRequired: "Укажи пароль."
       },
       register: {
         eyebrow: "Подключение оператора",
@@ -198,6 +200,10 @@ export const messages = {
         switchPrompt: "Уже есть аккаунт?",
         switchLink: "Войти",
         failed: "Не удалось зарегистрироваться",
+        invalidEmail: "Укажи корректный email.",
+        invalidUsername: "Username может содержать только буквы, цифры, точку, дефис и подчеркивание.",
+        invalidPassword: "Пароль должен быть длиной от 8 символов.",
+        roleRequired: "Выбери роль.",
         roleBackend: "Backend",
         roleFrontend: "Frontend",
         roleDevops: "DevOps",
@@ -391,7 +397,9 @@ export const messages = {
         submitting: "Кіріп жатыр...",
         switchPrompt: "Бұл жерде алғаш рет пе?",
         switchLink: "Аккаунт құру",
-        failed: "Кіру сәтсіз аяқталды"
+        failed: "Кіру сәтсіз аяқталды",
+        loginRequired: "Email немесе username енгіз.",
+        passwordRequired: "Құпиясөзді енгіз."
       },
       register: {
         eyebrow: "Операторды қосу",
@@ -412,6 +420,10 @@ export const messages = {
         switchPrompt: "Аккаунтың бар ма?",
         switchLink: "Кіру",
         failed: "Тіркелу сәтсіз аяқталды",
+        invalidEmail: "Дұрыс email енгіз.",
+        invalidUsername: "Username тек әріп, сан, нүкте, дефис және астын сызу таңбаларын қолдана алады.",
+        invalidPassword: "Құпиясөз кемінде 8 таңбадан тұруы керек.",
+        roleRequired: "Рөлді таңда.",
         roleBackend: "Backend",
         roleFrontend: "Frontend",
         roleDevops: "DevOps",
@@ -605,7 +617,9 @@ export const messages = {
         submitting: "Signing in...",
         switchPrompt: "New here?",
         switchLink: "Create an account",
-        failed: "Login failed"
+        failed: "Login failed",
+        loginRequired: "Enter an email or username.",
+        passwordRequired: "Enter a password."
       },
       register: {
         eyebrow: "Operator onboarding",
@@ -626,6 +640,10 @@ export const messages = {
         switchPrompt: "Already have an account?",
         switchLink: "Sign in",
         failed: "Registration failed",
+        invalidEmail: "Enter a valid email.",
+        invalidUsername: "Username may contain only letters, numbers, dots, dashes, and underscores.",
+        invalidPassword: "Password must be at least 8 characters long.",
+        roleRequired: "Choose a role.",
         roleBackend: "Backend",
         roleFrontend: "Frontend",
         roleDevops: "DevOps",

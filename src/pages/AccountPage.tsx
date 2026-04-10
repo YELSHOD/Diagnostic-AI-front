@@ -92,6 +92,8 @@ export function AccountPage() {
           t("auth.account.point2"),
           t("auth.account.point3")
         ]}
+        showHeader={false}
+        showFooter={false}
       >
         <div className="auth-account-grid">
           {error ? <section className="card auth-inline-alert" role="alert">{error}</section> : null}

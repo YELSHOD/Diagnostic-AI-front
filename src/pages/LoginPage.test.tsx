@@ -79,4 +79,17 @@ describe("LoginPage", () => {
     expect(screen.getByText(/Локальная платформа для логов и расследования/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Регистрация/i })).toBeInTheDocument();
   });
+
+  it("shows validation before submitting empty login form", async () => {
+    render(
+      <MemoryRouter>
+        <LoginPage />
+      </MemoryRouter>
+    );
+
+    await userEvent.click(screen.getByRole("button", { name: /login/i }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(/enter an email or username/i);
+    expect(login).not.toHaveBeenCalled();
+  });
 });

@@ -67,4 +67,20 @@ describe("RegisterPage", () => {
     expect(screen.getByRole("link", { name: /login/i })).toBeInTheDocument();
     expect(screen.getByText(/Choose your role once and keep the rest of the flow simple/i)).toBeInTheDocument();
   });
+
+  it("shows validation message before submitting invalid register payload", async () => {
+    render(
+      <MemoryRouter>
+        <RegisterPage />
+      </MemoryRouter>
+    );
+
+    await userEvent.type(screen.getByLabelText(/email/i), "bad-email");
+    await userEvent.type(screen.getByLabelText(/username/i), "name with spaces");
+    await userEvent.type(screen.getByLabelText(/^password$/i), "123");
+    await userEvent.click(screen.getByRole("button", { name: /register/i }));
+
+    expect(screen.getByRole("alert")).toHaveTextContent(/enter a valid email/i);
+    expect(register).not.toHaveBeenCalled();
+  });
 });
