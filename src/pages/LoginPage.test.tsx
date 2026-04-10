@@ -60,7 +60,7 @@ describe("LoginPage", () => {
     );
 
     expect(screen.getAllByText(/Diagnostic AI/i)).toHaveLength(2);
-    expect(screen.getByText(/One local workspace for logs, runtime health, and investigation/i)).toBeInTheDocument();
+    expect(screen.getByText(/One local platform for logs and investigation/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /register/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/email or username/i)).toBeVisible();
     expect(screen.getByLabelText(/password/i)).toBeVisible();
@@ -76,7 +76,7 @@ describe("LoginPage", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Единое локальное пространство для логов/i)).toBeInTheDocument();
+    expect(screen.getByText(/Локальная платформа для логов и расследования/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /Регистрация/i })).toBeInTheDocument();
   });
 });

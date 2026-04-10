@@ -498,6 +498,40 @@ a {
   min-width: 250px;
 }
 
+.auth-brand-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.auth-brand-emblem {
+  width: 34px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--accent) 14%, var(--bg-soft));
+  border: 1px solid color-mix(in srgb, var(--accent) 30%, var(--border));
+  color: var(--accent);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
+}
+
+.auth-brand-emblem svg {
+  width: 18px;
+  height: 18px;
+}
+
+.auth-brand-emblem rect,
+.auth-brand-emblem path,
+.auth-brand-emblem circle {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
 .auth-brand-mark {
   font-family: var(--font-display);
   font-size: 24px;
@@ -653,8 +687,8 @@ a {
 .auth-landing-form {
   display: flex;
   justify-content: flex-end;
-  position: sticky;
-  top: 26px;
+  position: relative;
+  padding-right: 18px;
   z-index: 1;
   animation: auth-fade-up 560ms ease both;
   animation-delay: 110ms;
@@ -1129,6 +1163,7 @@ a {
   .auth-landing-form {
     position: static;
     justify-content: stretch;
+    padding-right: 0;
   }
 
   .auth-account-grid {

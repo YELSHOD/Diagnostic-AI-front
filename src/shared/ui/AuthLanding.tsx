@@ -4,6 +4,21 @@ import { LocaleSwitcher } from "@features/settings/LocaleSwitcher";
 import { ThemeToggle } from "@features/settings/ThemeToggle";
 import { useI18n } from "@shared/i18n/useI18n";
 
+function BrandEmblem() {
+  return (
+    <span className="auth-brand-emblem" aria-hidden="true">
+      <svg viewBox="0 0 24 24">
+        <rect x="3" y="3" width="18" height="18" rx="6" />
+        <path d="M8 15.5 11 12l2.1 2.1L16.5 9" />
+        <circle cx="8" cy="15.5" r="1.1" />
+        <circle cx="11" cy="12" r="1.1" />
+        <circle cx="13.1" cy="14.1" r="1.1" />
+        <circle cx="16.5" cy="9" r="1.1" />
+      </svg>
+    </span>
+  );
+}
+
 type AuthLandingProps = {
   mode: "login" | "register" | "account";
   eyebrow: string;
@@ -29,7 +44,10 @@ export function AuthLanding({
     <div className="auth-landing">
       <header className="auth-landing-header">
         <Link className="auth-brand" to="/login">
-          <span className="auth-brand-mark">Diagnostic AI</span>
+          <span className="auth-brand-row">
+            <BrandEmblem />
+            <span className="auth-brand-mark">Diagnostic AI</span>
+          </span>
           <span className="auth-brand-copy">{t("auth.brandCopy")}</span>
         </Link>
         <div className="auth-landing-actions">

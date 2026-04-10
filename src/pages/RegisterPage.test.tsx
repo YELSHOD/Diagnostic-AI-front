@@ -63,7 +63,7 @@ describe("RegisterPage", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Create access for your observability workspace/i)).toBeInTheDocument();
+    expect(screen.getByText(/Create access to your observability workspace/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /login/i })).toBeInTheDocument();
     expect(screen.getByText(/Choose your role once and keep the rest of the flow simple/i)).toBeInTheDocument();
   });
