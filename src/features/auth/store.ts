@@ -19,6 +19,7 @@ type PersistedAuthState = {
 export type AuthState = PersistedAuthState & {
   isAuthenticated: boolean;
   setSession: (session: PersistedAuthState) => void;
+  setCurrentUser: (currentUser: AuthUser | null) => void;
   clearSession: () => void;
 };
 
@@ -28,6 +29,7 @@ export function createAuthState(): AuthState {
     ...persisted,
     isAuthenticated: Boolean(persisted.accessToken && persisted.currentUser),
     setSession: () => undefined,
+    setCurrentUser: () => undefined,
     clearSession: () => undefined
   };
 }
@@ -79,6 +81,19 @@ export const useAuthStore = create<AuthState>((set) => {
         return {
           ...session,
           isAuthenticated: Boolean(session.accessToken && session.currentUser)
+        };
+      }),
+    setCurrentUser: (currentUser) =>
+      set((state) => {
+        const next = {
+          accessToken: state.accessToken,
+          refreshToken: state.refreshToken,
+          currentUser
+        };
+        saveAuthState(next);
+        return {
+          ...next,
+          isAuthenticated: Boolean(state.accessToken && currentUser)
         };
       }),
     clearSession: () =>

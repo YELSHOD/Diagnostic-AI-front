@@ -1,4 +1,5 @@
 ﻿import { useEffect, useRef } from "react";
+import { loadPersistedAuthState } from "@features/auth/store";
 import { parseWsMessage, runtimeWsBaseUrl } from "@shared/lib/ws";
 import { useRealtimeStore } from "@features/realtime/store";
 
@@ -33,7 +34,14 @@ export function useLogsSocket({ containerId, wsBaseUrl, reconnectMinMs = 800, re
     const connect = () => {
       if (!active) return;
       const base = wsBaseUrl ?? runtimeWsBaseUrl();
-      socket = new WebSocket(`${base}/ws/logs?containerId=${encodeURIComponent(containerId)}`);
+      const params = new URLSearchParams({
+        containerId
+      });
+      const { accessToken } = loadPersistedAuthState();
+      if (accessToken) {
+        params.set("token", accessToken);
+      }
+      socket = new WebSocket(`${base}/ws/logs?${params.toString()}`);
 
       socket.onopen = () => {
         attempts.current = 0;

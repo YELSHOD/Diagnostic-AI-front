@@ -1,5 +1,6 @@
 ﻿import { useState, type ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { logout } from "@features/auth/api";
 import { useAuthStore } from "@features/auth/store";
 import { LocaleSwitcher } from "@features/settings/LocaleSwitcher";
 import { SettingsPanel } from "@features/settings/SettingsPanel";
@@ -14,6 +15,7 @@ export function ShellLayout({ children }: Props) {
   const sidebarCollapsed = useSettingsStore((s) => s.sidebarCollapsed);
   const toggleSidebar = useSettingsStore((s) => s.toggleSidebar);
   const currentUser = useAuthStore((state) => state.currentUser);
+  const refreshToken = useAuthStore((state) => state.refreshToken);
   const clearSession = useAuthStore((state) => state.clearSession);
   const [profileOpen, setProfileOpen] = useState(false);
   const items = [
@@ -32,6 +34,18 @@ export function ShellLayout({ children }: Props) {
     .map((part) => part[0]?.toUpperCase())
     .join("") || "DA";
   const primaryRole = currentUser?.roles[0] ?? "OPERATOR";
+
+  async function handleLogout() {
+    try {
+      if (refreshToken) {
+        await logout(refreshToken);
+      }
+    } finally {
+      clearSession();
+      setProfileOpen(false);
+      navigate("/login");
+    }
+  }
 
   return (
     <div className={`shell${sidebarCollapsed ? " collapsed" : ""}`}>
@@ -122,11 +136,7 @@ export function ShellLayout({ children }: Props) {
                   <button
                     type="button"
                     className="profile-item danger"
-                    onClick={() => {
-                      clearSession();
-                      setProfileOpen(false);
-                      navigate("/login");
-                    }}
+                    onClick={handleLogout}
                   >
                     {t("shell.profileExit")}
                   </button>
