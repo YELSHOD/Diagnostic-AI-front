@@ -156,6 +156,8 @@ export const messages = {
     },
     auth: {
       brandCopy: "Локальное рабочее пространство наблюдаемости",
+      footerLead: "Создано для локальной диагностики, кластеров и AI-ready расследования.",
+      footerMeta: "Один защищенный вход для логов, аналитики и развития диссертационного продукта.",
       navLogin: "Вход",
       navRegister: "Регистрация",
       navAccount: "Учетная запись",
@@ -368,6 +370,8 @@ export const messages = {
     },
     auth: {
       brandCopy: "Локалды observability workspace",
+      footerLead: "Локалды диагностика, кластерлер және AI-ready investigation үшін жасалған.",
+      footerMeta: "Логтар, аналитика және дипломдық өнімнің өсуі үшін бір қорғалған кіру нүктесі.",
       navLogin: "Кіру",
       navRegister: "Тіркелу",
       navAccount: "Аккаунт",
@@ -580,6 +584,8 @@ export const messages = {
     },
     auth: {
       brandCopy: "Local observability workspace",
+      footerLead: "Built for local diagnostics, clusters, and AI-ready investigation.",
+      footerMeta: "One protected entry point for logs, analytics, and the growing dissertation product.",
       navLogin: "Login",
       navRegister: "Register",
       navAccount: "Account",

@@ -71,6 +71,14 @@ export function AuthLanding({
 
         <section className="auth-landing-form">{children}</section>
       </main>
+
+      <footer className="auth-landing-footer">
+        <div className="auth-landing-footer-mark">Diagnostic AI</div>
+        <div className="auth-landing-footer-copy">
+          <span>{t("auth.footerLead")}</span>
+          <span>{t("auth.footerMeta")}</span>
+        </div>
+      </footer>
     </div>
   );
 }

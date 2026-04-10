@@ -59,11 +59,12 @@ describe("LoginPage", () => {
       </MemoryRouter>
     );
 
-    expect(screen.getByText(/Diagnostic AI/i)).toBeInTheDocument();
+    expect(screen.getAllByText(/Diagnostic AI/i)).toHaveLength(2);
     expect(screen.getByText(/One local workspace for logs, runtime health, and investigation/i)).toBeInTheDocument();
     expect(screen.getByRole("link", { name: /register/i })).toBeInTheDocument();
     expect(screen.getByLabelText(/email or username/i)).toBeVisible();
     expect(screen.getByLabelText(/password/i)).toBeVisible();
+    expect(screen.getByText(/Built for local diagnostics, clusters, and AI-ready investigation/i)).toBeInTheDocument();
   });
 
   it("renders localized auth copy", () => {
