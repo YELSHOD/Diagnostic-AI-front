@@ -3,6 +3,7 @@ import { useAuthStore } from "@features/auth/store";
 import { ShellLayout } from "@shared/ui/ShellLayout";
 import { OverviewPage } from "@pages/OverviewPage";
 import { ContainersPage } from "@pages/ContainersPage";
+import { RuntimeTargetsPage } from "@pages/RuntimeTargetsPage";
 import { LiveLogsPage } from "@pages/LiveLogsPage";
 import { AnalysisPage } from "@pages/AnalysisPage";
 import { AiChatPage } from "@pages/AiChatPage";
@@ -49,6 +50,7 @@ export const routes: RouteObject[] = [
     children: [
       { index: true, element: <Navigate to="/overview" replace /> },
       { path: "overview", element: <OverviewPage /> },
+      { path: "runtime-targets", element: <RuntimeTargetsPage /> },
       { path: "containers", element: <ContainersPage /> },
       { path: "logs", element: <LiveLogsPage /> },
       { path: "analysis", element: <AnalysisPage /> },

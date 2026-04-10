@@ -20,7 +20,7 @@ export function ShellLayout({ children }: Props) {
   const [profileOpen, setProfileOpen] = useState(false);
   const items = [
     ["/overview", t("shell.nav.overview")],
-    ["/containers", t("shell.nav.containers")],
+    ["/runtime-targets", t("shell.nav.containers")],
     ["/logs", t("shell.nav.logs")],
     ["/analysis", t("shell.nav.analysis")],
     ["/settings", t("shell.nav.settings")],

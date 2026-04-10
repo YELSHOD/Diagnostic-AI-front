@@ -1,4 +1,4 @@
-﻿import { useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useLogsSocket } from "@features/realtime/useLogsSocket";
 import { useRealtimeStore } from "@features/realtime/store";
@@ -11,7 +11,7 @@ export function LiveLogsPage() {
   const [params] = useSearchParams();
   const [text, setText] = useState("");
   const [level, setLevel] = useState("");
-  const containerId = params.get("containerId") ?? "";
+  const runtimeTargetId = params.get("runtimeTargetId") ?? params.get("containerId") ?? "";
 
   const logs = useRealtimeStore((s) => s.logs);
   const errors = useRealtimeStore((s) => s.errors);
@@ -21,7 +21,7 @@ export function LiveLogsPage() {
   const reconnectMinMs = useSettingsStore((s) => s.reconnectMinMs);
   const reconnectMaxMs = useSettingsStore((s) => s.reconnectMaxMs);
 
-  useLogsSocket({ containerId, wsBaseUrl, reconnectMinMs, reconnectMaxMs });
+  useLogsSocket({ containerId: runtimeTargetId, wsBaseUrl, reconnectMinMs, reconnectMaxMs });
 
   const filtered = useMemo(
     () =>
@@ -39,14 +39,14 @@ export function LiveLogsPage() {
     <div>
       <PageIntro
         title="Live Logs"
-        description={containerId
+        description={runtimeTargetId
           ? t("logs.descriptionSelected")
           : t("logs.descriptionEmpty")}
-        actions={containerId ? <Link className="button secondary" to="/containers">{t("common.changeContainer")}</Link> : undefined}
+        actions={runtimeTargetId ? <Link className="button secondary" to="/runtime-targets">{t("common.changeContainer")}</Link> : undefined}
       />
       <div className="topbar">
         <div style={{ color: "var(--text-muted)", fontSize: 14 }}>
-          {containerId ? `${t("logs.selected")}: ${containerId}` : t("logs.notSelected")}
+          {runtimeTargetId ? `${t("logs.selected")}: ${runtimeTargetId}` : t("logs.notSelected")}
         </div>
         <div>
           <span className="badge" style={{ borderColor: connected ? "var(--ok)" : "var(--danger)" }}>
@@ -54,8 +54,8 @@ export function LiveLogsPage() {
           </span>
         </div>
       </div>
-      {!containerId ? <div className="card empty-state">{t("logs.pickContainer")}</div> : null}
-      {containerId ? (
+      {!runtimeTargetId ? <div className="card empty-state">{t("logs.pickContainer")}</div> : null}
+      {runtimeTargetId ? (
         <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, marginBottom: 16 }}>
           <article className="card kpi-card">
             <div style={{ color: "var(--text-muted)", fontSize: 12, letterSpacing: "0.04em", textTransform: "uppercase" }}>{t("logs.visibleLines")}</div>
@@ -84,7 +84,7 @@ export function LiveLogsPage() {
             </select>
           </div>
           <div style={{ maxHeight: 560, overflow: "auto" }}>
-            {containerId && filtered.length === 0 ? <div className="empty-state">{t("logs.noLinesYet")}</div> : null}
+            {runtimeTargetId && filtered.length === 0 ? <div className="empty-state">{t("logs.noLinesYet")}</div> : null}
             {filtered.map((line, idx) => (
               <div key={`${line.ts}-${idx}`} className={`log-row log-${line.payload.level ?? "INFO"}`}>
                 [{line.ts}] {line.payload.level ?? "-"} {line.payload.message}
