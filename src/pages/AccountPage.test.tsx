@@ -106,5 +106,6 @@ describe("AccountPage", () => {
 
     expect(await screen.findByText(/Profile details/i)).toBeInTheDocument();
     expect(screen.getByText(/Password security/i)).toBeInTheDocument();
+    expect(screen.getByText(/Manage workspace identity and security from one place/i)).toBeInTheDocument();
   });
 });

@@ -461,6 +461,20 @@ a {
 .auth-landing {
   min-height: 100%;
   padding: 10px 0 18px;
+  position: relative;
+}
+
+.auth-landing::before {
+  content: "";
+  position: absolute;
+  inset: 110px 0 auto auto;
+  width: 420px;
+  height: 420px;
+  border-radius: 999px;
+  background: radial-gradient(circle, color-mix(in srgb, var(--accent) 18%, transparent) 0%, transparent 68%);
+  filter: blur(12px);
+  pointer-events: none;
+  opacity: 0.9;
 }
 
 .auth-landing-header {
@@ -474,6 +488,8 @@ a {
 .auth-brand {
   display: grid;
   gap: 6px;
+  position: relative;
+  z-index: 1;
 }
 
 .auth-brand-mark {
@@ -491,6 +507,8 @@ a {
   display: flex;
   align-items: center;
   gap: 14px;
+  position: relative;
+  z-index: 1;
 }
 
 .auth-landing-nav {
@@ -536,6 +554,8 @@ a {
 
 .auth-landing-copy {
   padding: 28px 8px 24px 0;
+  position: relative;
+  z-index: 1;
 }
 
 .auth-landing-eyebrow {
@@ -551,6 +571,7 @@ a {
   font-size: clamp(48px, 7vw, 84px);
   line-height: 0.92;
   letter-spacing: -0.065em;
+  text-wrap: balance;
 }
 
 .auth-landing-description {
@@ -606,6 +627,7 @@ a {
 .auth-landing-form {
   position: sticky;
   top: 26px;
+  z-index: 1;
 }
 
 .auth-hero,
@@ -722,6 +744,10 @@ a {
     linear-gradient(180deg, color-mix(in srgb, var(--card) 97%, transparent), color-mix(in srgb, var(--bg-soft) 94%, transparent));
   border-color: color-mix(in srgb, var(--border) 92%, transparent);
   box-shadow: 0 28px 74px rgba(3, 8, 18, 0.22);
+}
+
+.auth-account-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 .auth-card-header,
@@ -1004,5 +1030,9 @@ a {
 
   .auth-landing-form {
     position: static;
+  }
+
+  .auth-account-grid {
+    grid-template-columns: 1fr;
   }
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { changePassword, getAccount, updateAccount } from "@features/auth/api";
 import { useAuthStore } from "@features/auth/store";
-import { AuthFrame } from "@shared/ui/AuthFrame";
+import { AuthLanding } from "@shared/ui/AuthLanding";
 
 export function AccountPage() {
   const setCurrentUser = useAuthStore((state) => state.setCurrentUser);
@@ -78,22 +78,22 @@ export function AccountPage() {
   }
 
   return (
-    <div className="page">
-      <AuthFrame
-        eyebrow="Operator credentials"
-        title="Manage identity, session trust, and workspace security"
-        description="Keep the workspace profile current, preserve role clarity, and rotate credentials without leaving the observability product shell."
-        panelTitle="Authenticated workspace"
-        panelBody="This page keeps profile data and security controls together, so the system feels like one professional product instead of a scattered demo."
-        highlights={[
-          { value: loading ? "..." : "Active", label: "Session state" },
-          { value: "Profile", label: "Identity controls" },
-          { value: "Secure", label: "Password rotation" }
+    <div className="page auth-page">
+      <AuthLanding
+        mode="account"
+        eyebrow="Authenticated workspace"
+        title="Manage workspace identity and security from one place"
+        description="Keep account data, role context, and password updates inside the same product surface, so the credentials area feels like part of the platform instead of an isolated settings page."
+        supportingTitle="What stays here"
+        supportingPoints={[
+          "Update the profile used across header, menus, and protected workflows",
+          "Rotate your password without leaving the observability product shell",
+          "Keep identity controls aligned with the same clean entry used for login and registration"
         ]}
       >
         <div className="auth-account-grid">
           {error ? <section className="card auth-inline-alert" role="alert">{error}</section> : null}
-          <form className="card auth-card auth-card-strong" onSubmit={submitProfile}>
+          <form className="card auth-card auth-landing-card" onSubmit={submitProfile}>
             <div className="auth-section-header">
               <div className="auth-section-title">Profile details</div>
               <div className="auth-section-copy">Update the identity shown across the workspace shell and account menus.</div>
@@ -122,7 +122,7 @@ export function AccountPage() {
               {savingProfile ? "Saving..." : "Save account"}
             </button>
           </form>
-          <form className="card auth-card auth-card-strong" onSubmit={submitPassword}>
+          <form className="card auth-card auth-landing-card" onSubmit={submitPassword}>
             <div className="auth-section-header">
               <div className="auth-section-title">Password security</div>
               <div className="auth-section-copy">Use a dedicated password update flow to keep the local workspace secure.</div>
@@ -152,7 +152,7 @@ export function AccountPage() {
             </button>
           </form>
         </div>
-      </AuthFrame>
+      </AuthLanding>
     </div>
   );
 }

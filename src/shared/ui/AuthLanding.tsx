@@ -4,7 +4,7 @@ import { LocaleSwitcher } from "@features/settings/LocaleSwitcher";
 import { ThemeToggle } from "@features/settings/ThemeToggle";
 
 type AuthLandingProps = {
-  mode: "login" | "register";
+  mode: "login" | "register" | "account";
   eyebrow: string;
   title: string;
   description: string;
@@ -37,6 +37,11 @@ export function AuthLanding({
             <Link className={`auth-nav-link${mode === "register" ? " active" : ""}`} to="/register">
               Register
             </Link>
+            {mode === "account" ? (
+              <Link className="auth-nav-link active" to="/account">
+                Account
+              </Link>
+            ) : null}
           </nav>
           <div className="auth-landing-tools">
             <LocaleSwitcher compact />
