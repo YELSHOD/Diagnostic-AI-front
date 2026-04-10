@@ -1,5 +1,6 @@
 ﻿import { useState, type ReactNode } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
+import { useAuthStore } from "@features/auth/store";
 import { LocaleSwitcher } from "@features/settings/LocaleSwitcher";
 import { SettingsPanel } from "@features/settings/SettingsPanel";
 import { useSettingsStore } from "@features/settings/store";
@@ -12,6 +13,8 @@ export function ShellLayout({ children }: Props) {
   const navigate = useNavigate();
   const sidebarCollapsed = useSettingsStore((s) => s.sidebarCollapsed);
   const toggleSidebar = useSettingsStore((s) => s.toggleSidebar);
+  const currentUser = useAuthStore((state) => state.currentUser);
+  const clearSession = useAuthStore((state) => state.clearSession);
   const [profileOpen, setProfileOpen] = useState(false);
   const items = [
     ["/overview", t("shell.nav.overview")],
@@ -21,6 +24,14 @@ export function ShellLayout({ children }: Props) {
     ["/settings", t("shell.nav.settings")],
     ["/ai-chat", t("shell.nav.aiChat")]
   ] as const;
+
+  const initials = currentUser?.username
+    ?.split(/[._-]/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase())
+    .join("") || "DA";
+  const primaryRole = currentUser?.roles[0] ?? "OPERATOR";
 
   return (
     <div className={`shell${sidebarCollapsed ? " collapsed" : ""}`}>
@@ -83,14 +94,14 @@ export function ShellLayout({ children }: Props) {
                 title={t("shell.profile")}
                 onClick={() => setProfileOpen((value) => !value)}
               >
-                <span className="profile-avatar">DA</span>
+                <span className="profile-avatar">{initials}</span>
               </button>
               {profileOpen ? (
                 <div className="profile-dropdown" role="menu" aria-label={t("shell.profileMenu")}>
                   <div className="profile-summary">
                     <div className="profile-summary-main">
-                      <div className="profile-summary-name">{t("shell.profileName")}</div>
-                      <div className="profile-summary-role">{t("shell.profileRole")}</div>
+                      <div className="profile-summary-name">{currentUser?.username ?? t("shell.profileName")}</div>
+                      <div className="profile-summary-role">{primaryRole}</div>
                     </div>
                     <div className="profile-status">
                       <span className="profile-status-dot" />
@@ -103,17 +114,18 @@ export function ShellLayout({ children }: Props) {
                     className="profile-item"
                     onClick={() => {
                       setProfileOpen(false);
-                      navigate("/settings");
+                      navigate("/account");
                     }}
                   >
-                    {t("shell.profileSettings")}
+                    {t("shell.profileAccount")}
                   </button>
                   <button
                     type="button"
                     className="profile-item danger"
                     onClick={() => {
+                      clearSession();
                       setProfileOpen(false);
-                      navigate("/");
+                      navigate("/login");
                     }}
                   >
                     {t("shell.profileExit")}

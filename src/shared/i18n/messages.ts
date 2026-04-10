@@ -16,7 +16,7 @@ export const messages = {
       profileName: "Research Workspace",
       profileRole: "Dissertation operator",
       profileStatus: "Local session active",
-      profileSettings: "Настройки",
+      profileAccount: "Учетные данные",
       profileExit: "Выход",
       nav: {
         overview: "Обзор",
@@ -170,7 +170,7 @@ export const messages = {
       profileName: "Research Workspace",
       profileRole: "Dissertation operator",
       profileStatus: "Local session active",
-      profileSettings: "Баптаулар",
+      profileAccount: "Тіркелгі деректері",
       profileExit: "Шығу",
       nav: {
         overview: "Шолу",
@@ -311,7 +311,7 @@ export const messages = {
       profileName: "Research Workspace",
       profileRole: "Dissertation operator",
       profileStatus: "Local session active",
-      profileSettings: "Settings",
+      profileAccount: "Account",
       profileExit: "Exit",
       nav: {
         overview: "Overview",
