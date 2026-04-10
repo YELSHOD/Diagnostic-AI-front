@@ -80,4 +80,31 @@ describe("AccountPage", () => {
       newPassword: "new-pass-123"
     });
   });
+
+  it("renders separate profile and password sections", async () => {
+    vi.mocked(getAccount).mockResolvedValue({
+      id: "user-1",
+      email: "user@example.com",
+      username: "dev.user",
+      status: "ACTIVE",
+      roles: ["BACKEND"]
+    });
+    vi.mocked(updateAccount).mockResolvedValue({
+      id: "user-1",
+      email: "user@example.com",
+      username: "dev.user",
+      status: "ACTIVE",
+      roles: ["BACKEND"]
+    });
+    vi.mocked(changePassword).mockResolvedValue(undefined);
+
+    render(
+      <MemoryRouter>
+        <AccountPage />
+      </MemoryRouter>
+    );
+
+    expect(await screen.findByText(/Profile details/i)).toBeInTheDocument();
+    expect(screen.getByText(/Password security/i)).toBeInTheDocument();
+  });
 });

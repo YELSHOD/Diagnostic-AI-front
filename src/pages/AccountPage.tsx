@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { changePassword, getAccount, updateAccount } from "@features/auth/api";
 import { useAuthStore } from "@features/auth/store";
-import { PageIntro } from "@shared/ui/PageIntro";
+import { AuthFrame } from "@shared/ui/AuthFrame";
 
 export function AccountPage() {
   const setCurrentUser = useAuthStore((state) => state.setCurrentUser);
@@ -79,61 +79,80 @@ export function AccountPage() {
 
   return (
     <div className="page">
-      <PageIntro
-        title="Account"
-        description="Review your credentials, update profile details, and change the password for this workspace."
-      />
-      {error ? <section className="card" role="alert">{error}</section> : null}
-      <form className="card" onSubmit={submitProfile}>
-        <label className="field">
-          <span>Email</span>
-          <input
-            aria-label="Email"
-            className="input"
-            value={profile.email}
-            onChange={(event) => setProfile((state) => ({ ...state, email: event.target.value }))}
-            disabled={loading}
-          />
-        </label>
-        <label className="field">
-          <span>Username</span>
-          <input
-            aria-label="Username"
-            className="input"
-            value={profile.username}
-            onChange={(event) => setProfile((state) => ({ ...state, username: event.target.value }))}
-            disabled={loading}
-          />
-        </label>
-        <button className="button" type="submit" disabled={loading || savingProfile}>
-          {savingProfile ? "Saving..." : "Save account"}
-        </button>
-      </form>
-      <form className="card" onSubmit={submitPassword}>
-        <label className="field">
-          <span>Current password</span>
-          <input
-            aria-label="Current password"
-            className="input"
-            type="password"
-            value={passwordForm.currentPassword}
-            onChange={(event) => setPasswordForm((state) => ({ ...state, currentPassword: event.target.value }))}
-          />
-        </label>
-        <label className="field">
-          <span>New password</span>
-          <input
-            aria-label="New password"
-            className="input"
-            type="password"
-            value={passwordForm.newPassword}
-            onChange={(event) => setPasswordForm((state) => ({ ...state, newPassword: event.target.value }))}
-          />
-        </label>
-        <button className="button" type="submit" disabled={savingPassword}>
-          {savingPassword ? "Updating..." : "Change password"}
-        </button>
-      </form>
+      <AuthFrame
+        eyebrow="Operator credentials"
+        title="Manage identity, session trust, and workspace security"
+        description="Keep the workspace profile current, preserve role clarity, and rotate credentials without leaving the observability product shell."
+        panelTitle="Authenticated workspace"
+        panelBody="This page keeps profile data and security controls together, so the system feels like one professional product instead of a scattered demo."
+        highlights={[
+          { value: loading ? "..." : "Active", label: "Session state" },
+          { value: "Profile", label: "Identity controls" },
+          { value: "Secure", label: "Password rotation" }
+        ]}
+      >
+        <div className="auth-account-grid">
+          {error ? <section className="card auth-inline-alert" role="alert">{error}</section> : null}
+          <form className="card auth-card auth-card-strong" onSubmit={submitProfile}>
+            <div className="auth-section-header">
+              <div className="auth-section-title">Profile details</div>
+              <div className="auth-section-copy">Update the identity shown across the workspace shell and account menus.</div>
+            </div>
+            <label className="field">
+              <span>Email</span>
+              <input
+                aria-label="Email"
+                className="input"
+                value={profile.email}
+                onChange={(event) => setProfile((state) => ({ ...state, email: event.target.value }))}
+                disabled={loading}
+              />
+            </label>
+            <label className="field">
+              <span>Username</span>
+              <input
+                aria-label="Username"
+                className="input"
+                value={profile.username}
+                onChange={(event) => setProfile((state) => ({ ...state, username: event.target.value }))}
+                disabled={loading}
+              />
+            </label>
+            <button className="button auth-submit" type="submit" disabled={loading || savingProfile}>
+              {savingProfile ? "Saving..." : "Save account"}
+            </button>
+          </form>
+          <form className="card auth-card auth-card-strong" onSubmit={submitPassword}>
+            <div className="auth-section-header">
+              <div className="auth-section-title">Password security</div>
+              <div className="auth-section-copy">Use a dedicated password update flow to keep the local workspace secure.</div>
+            </div>
+            <label className="field">
+              <span>Current password</span>
+              <input
+                aria-label="Current password"
+                className="input"
+                type="password"
+                value={passwordForm.currentPassword}
+                onChange={(event) => setPasswordForm((state) => ({ ...state, currentPassword: event.target.value }))}
+              />
+            </label>
+            <label className="field">
+              <span>New password</span>
+              <input
+                aria-label="New password"
+                className="input"
+                type="password"
+                value={passwordForm.newPassword}
+                onChange={(event) => setPasswordForm((state) => ({ ...state, newPassword: event.target.value }))}
+              />
+            </label>
+            <button className="button auth-submit" type="submit" disabled={savingPassword}>
+              {savingPassword ? "Updating..." : "Change password"}
+            </button>
+          </form>
+        </div>
+      </AuthFrame>
     </div>
   );
 }

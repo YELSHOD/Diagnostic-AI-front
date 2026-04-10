@@ -49,4 +49,16 @@ describe("LoginPage", () => {
       password: "strong-pass"
     });
   });
+
+  it("renders a product-grade auth shell", () => {
+    render(
+      <MemoryRouter>
+        <LoginPage />
+      </MemoryRouter>
+    );
+
+    expect(screen.getByText(/Local observability, ready for AI-assisted investigation/i)).toBeInTheDocument();
+    expect(screen.getByText(/Unified access to logs, clusters, analytics, and live investigation/i)).toBeInTheDocument();
+    expect(screen.getByText(/Workspace access/i)).toBeInTheDocument();
+  });
 });
