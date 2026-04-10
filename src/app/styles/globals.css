@@ -482,17 +482,20 @@ a {
 .auth-landing-header {
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  gap: 20px;
+  align-items: flex-start;
+  gap: 28px;
   margin-bottom: 34px;
+  padding: 4px 0 0 22px;
   animation: auth-fade-up 420ms ease both;
 }
 
 .auth-brand {
   display: grid;
-  gap: 6px;
+  gap: 7px;
   position: relative;
   z-index: 1;
+  padding-top: 6px;
+  min-width: 250px;
 }
 
 .auth-brand-mark {
@@ -505,19 +508,24 @@ a {
 .auth-brand-copy {
   color: var(--text-muted);
   font-size: 13px;
+  line-height: 1.45;
 }
 
 .auth-landing-actions {
   display: flex;
   align-items: center;
-  gap: 14px;
+  justify-content: flex-end;
+  gap: 16px;
   position: relative;
   z-index: 1;
+  flex-wrap: wrap;
 }
 
 .auth-landing-nav {
   display: inline-flex;
+  align-items: center;
   gap: 8px;
+  min-height: 52px;
   padding: 6px;
   border: 1px solid color-mix(in srgb, var(--border) 86%, transparent);
   border-radius: 999px;
@@ -546,7 +554,18 @@ a {
 .auth-landing-tools {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 14px;
+}
+
+.auth-landing-tools .locale-switcher.compact {
+  margin: 0;
+}
+
+.auth-landing-tools .locale-track,
+.auth-landing-tools .theme-toggle {
+  min-height: 52px;
+  padding: 6px;
+  border-radius: 999px;
 }
 
 .auth-landing-main {
@@ -1091,6 +1110,15 @@ a {
     grid-template-columns: 1fr;
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .auth-landing-header {
+    padding-left: 0;
+  }
+
+  .auth-brand {
+    min-width: 0;
+    padding-top: 0;
   }
 
   .auth-landing-title {

@@ -155,7 +155,7 @@ export const messages = {
       defaultsNote: "Рекомендуемые локальные значения: http://localhost:8080 для REST и ws://localhost:8080 для websocket endpoint."
     },
     auth: {
-      brandCopy: "Локальное рабочее пространство наблюдаемости",
+      brandCopy: "Локальная платформа наблюдаемости",
       footerLead: "Создано для локальной диагностики, кластеров и AI-ready расследования.",
       footerMeta: "Один защищенный вход для логов, аналитики и развития диссертационного продукта.",
       navLogin: "Вход",
@@ -369,7 +369,7 @@ export const messages = {
       defaultsNote: "Ұсынылатын жергілікті мәндер: REST үшін http://localhost:8080 және websocket endpoint үшін ws://localhost:8080."
     },
     auth: {
-      brandCopy: "Локалды observability workspace",
+      brandCopy: "Локалды observability платформасы",
       footerLead: "Локалды диагностика, кластерлер және AI-ready investigation үшін жасалған.",
       footerMeta: "Логтар, аналитика және дипломдық өнімнің өсуі үшін бір қорғалған кіру нүктесі.",
       navLogin: "Кіру",
