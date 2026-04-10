@@ -35,4 +35,25 @@ describe("AuthBootstrap", () => {
       expect(useAuthStore.getState().currentUser?.username).toBe("dev.user");
     });
   });
+
+  it("clears a stale persisted session when backend validation fails", async () => {
+    useAuthStore.getState().setSession({
+      accessToken: "stale-token",
+      refreshToken: "refresh-token",
+      currentUser: {
+        id: "user-1",
+        email: "user@example.com",
+        username: "dev.user",
+        status: "ACTIVE",
+        roles: ["BACKEND"]
+      }
+    });
+    vi.mocked(me).mockRejectedValue(new Error("HTTP 401: Unauthorized"));
+
+    render(<AuthBootstrap><div>app</div></AuthBootstrap>);
+
+    await waitFor(() => {
+      expect(useAuthStore.getState().isAuthenticated).toBe(false);
+    });
+  });
 });

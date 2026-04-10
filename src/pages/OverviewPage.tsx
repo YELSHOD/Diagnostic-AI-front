@@ -10,8 +10,11 @@ import { LineChart } from "@widgets/LineChart";
 export function OverviewPage() {
   const { t } = useI18n();
   const [service, setService] = useState("");
-  const to = new Date().toISOString();
-  const from = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+  const [{ from, to }] = useState(() => {
+    const to = new Date().toISOString();
+    const from = new Date(Date.now() - 60 * 60 * 1000).toISOString();
+    return { from, to };
+  });
   const analytics = useAnalytics({ from, to, service: service || undefined });
   const containers = useContainers();
 

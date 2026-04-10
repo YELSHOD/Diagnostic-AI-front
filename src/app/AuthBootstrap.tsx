@@ -8,12 +8,11 @@ type Props = {
 
 export function AuthBootstrap({ children }: Props) {
   const accessToken = useAuthStore((state) => state.accessToken);
-  const currentUser = useAuthStore((state) => state.currentUser);
   const setCurrentUser = useAuthStore((state) => state.setCurrentUser);
   const clearSession = useAuthStore((state) => state.clearSession);
 
   useEffect(() => {
-    if (!accessToken || currentUser) {
+    if (!accessToken) {
       return;
     }
     let active = true;
@@ -31,7 +30,7 @@ export function AuthBootstrap({ children }: Props) {
     return () => {
       active = false;
     };
-  }, [accessToken, currentUser, setCurrentUser, clearSession]);
+  }, [accessToken, setCurrentUser, clearSession]);
 
   return <>{children}</>;
 }
