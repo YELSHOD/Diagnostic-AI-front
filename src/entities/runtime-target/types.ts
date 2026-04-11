@@ -10,3 +10,13 @@ export type RuntimeTargetDto = {
   logSourceRef: string | null;
   metadata: Record<string, string>;
 };
+
+export type UpsertRuntimeTargetRequest = {
+  name: string;
+  host: string;
+  port: number;
+  healthUrl: string;
+  logSourceType: "FILE_TAIL" | "HTTP_INGEST";
+  logSourceRef: string;
+  enabled: boolean;
+};

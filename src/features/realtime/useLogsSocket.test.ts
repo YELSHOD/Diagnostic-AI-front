@@ -46,11 +46,11 @@ describe("useLogsSocket", () => {
 
   it("includes jwt token in websocket url", () => {
     renderHook(() => useLogsSocket({
-      containerId: "orders",
+      runtimeTargetId: "orders",
       wsBaseUrl: "ws://localhost:8080"
     }));
 
     expect(MockWebSocket.instances[0]?.url).toContain("token=access-token");
-    expect(MockWebSocket.instances[0]?.url).toContain("containerId=orders");
+    expect(MockWebSocket.instances[0]?.url).toContain("runtimeTargetId=orders");
   });
 });

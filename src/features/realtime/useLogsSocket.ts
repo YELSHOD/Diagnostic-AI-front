@@ -4,13 +4,13 @@ import { parseWsMessage, runtimeWsBaseUrl } from "@shared/lib/ws";
 import { useRealtimeStore } from "@features/realtime/store";
 
 type Opts = {
-  containerId: string;
+  runtimeTargetId: string;
   wsBaseUrl?: string;
   reconnectMinMs?: number;
   reconnectMaxMs?: number;
 };
 
-export function useLogsSocket({ containerId, wsBaseUrl, reconnectMinMs = 800, reconnectMaxMs = 10000 }: Opts) {
+export function useLogsSocket({ runtimeTargetId, wsBaseUrl, reconnectMinMs = 800, reconnectMaxMs = 10000 }: Opts) {
   const setConnected = useRealtimeStore((s) => s.setConnected);
   const setContainer = useRealtimeStore((s) => s.setContainer);
   const pushLog = useRealtimeStore((s) => s.pushLog);
@@ -21,12 +21,12 @@ export function useLogsSocket({ containerId, wsBaseUrl, reconnectMinMs = 800, re
   const attempts = useRef(0);
 
   useEffect(() => {
-    setContainer(containerId);
+    setContainer(runtimeTargetId);
     clearStream();
-  }, [containerId, setContainer, clearStream]);
+  }, [runtimeTargetId, setContainer, clearStream]);
 
   useEffect(() => {
-    if (!containerId) return;
+    if (!runtimeTargetId) return;
     let active = true;
     let socket: WebSocket | null = null;
     let timer: number | null = null;
@@ -35,7 +35,7 @@ export function useLogsSocket({ containerId, wsBaseUrl, reconnectMinMs = 800, re
       if (!active) return;
       const base = wsBaseUrl ?? runtimeWsBaseUrl();
       const params = new URLSearchParams({
-        containerId
+        runtimeTargetId
       });
       const { accessToken } = loadPersistedAuthState();
       if (accessToken) {
@@ -82,5 +82,5 @@ export function useLogsSocket({ containerId, wsBaseUrl, reconnectMinMs = 800, re
       if (timer !== null) window.clearTimeout(timer);
       socket?.close();
     };
-  }, [containerId, wsBaseUrl, reconnectMinMs, reconnectMaxMs, setConnected, pushLog, pushError, applyClusterUpdate]);
+  }, [runtimeTargetId, wsBaseUrl, reconnectMinMs, reconnectMaxMs, setConnected, pushLog, pushError, applyClusterUpdate]);
 }

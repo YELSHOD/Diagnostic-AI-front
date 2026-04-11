@@ -21,7 +21,7 @@ export function LiveLogsPage() {
   const reconnectMinMs = useSettingsStore((s) => s.reconnectMinMs);
   const reconnectMaxMs = useSettingsStore((s) => s.reconnectMaxMs);
 
-  useLogsSocket({ containerId: runtimeTargetId, wsBaseUrl, reconnectMinMs, reconnectMaxMs });
+  useLogsSocket({ runtimeTargetId, wsBaseUrl, reconnectMinMs, reconnectMaxMs });
 
   const filtered = useMemo(
     () =>
