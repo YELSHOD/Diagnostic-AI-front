@@ -1,7 +1,7 @@
 ﻿import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAnalytics } from "@entities/analytics/api";
-import { useContainers } from "@entities/container/api";
+import { useRuntimeTargets } from "@entities/runtime-target/api";
 import { useI18n } from "@shared/i18n/useI18n";
 import { KpiCard } from "@shared/ui/KpiCard";
 import { PageIntro } from "@shared/ui/PageIntro";
@@ -16,7 +16,7 @@ export function OverviewPage() {
     return { from, to };
   });
   const analytics = useAnalytics({ from, to, service: service || undefined });
-  const containers = useContainers();
+  const runtimeTargets = useRuntimeTargets();
 
   const errors = analytics.data?.errorsPerMinute ?? [];
   const totalErrors = useMemo(() => errors.reduce((sum, x) => sum + x.count, 0), [errors]);
@@ -26,7 +26,7 @@ export function OverviewPage() {
       <PageIntro
         title={t("overview.title")}
         description={t("overview.description")}
-        actions={<div style={{ display: "flex", gap: 8 }}><Link className="button" to="/containers">{t("common.openContainers")}</Link><Link className="button secondary" to="/logs">{t("common.openLiveLogs")}</Link></div>}
+        actions={<div style={{ display: "flex", gap: 8 }}><Link className="button" to="/runtime-targets">{t("common.openContainers")}</Link><Link className="button secondary" to="/logs">{t("common.openLiveLogs")}</Link></div>}
       />
       <div className="topbar">
         <div style={{ color: "var(--text-muted)", fontSize: 14 }}>
@@ -37,12 +37,12 @@ export function OverviewPage() {
       <div className="grid-3">
         <KpiCard title={t("overview.errorsInWindow")} value={totalErrors} hint={t("overview.errorsHint")} />
         <KpiCard title={t("overview.exceptionTypes")} value={analytics.data?.topExceptionTypes.length ?? 0} hint={t("overview.exceptionHint")} />
-        <KpiCard title={t("overview.visibleContainers")} value={containers.data?.length ?? 0} hint={t("overview.containersHint")} />
+        <KpiCard title={t("overview.visibleContainers")} value={runtimeTargets.data?.length ?? 0} hint={t("overview.containersHint")} />
       </div>
       {analytics.isLoading ? <section className="card" style={{ marginTop: 16 }}>{t("common.loadingAnalytics")}</section> : null}
       {analytics.error ? <section className="card" style={{ marginTop: 16, color: "var(--danger)" }}>{t("common.failedAnalytics")}</section> : null}
-      {containers.isLoading ? <section className="card" style={{ marginTop: 16 }}>{t("common.loadingContainers")}</section> : null}
-      {containers.error ? <section className="card" style={{ marginTop: 16, color: "var(--danger)" }}>{t("common.failedContainers")}</section> : null}
+      {runtimeTargets.isLoading ? <section className="card" style={{ marginTop: 16 }}>{t("common.loadingContainers")}</section> : null}
+      {runtimeTargets.error ? <section className="card" style={{ marginTop: 16, color: "var(--danger)" }}>{t("common.failedContainers")}</section> : null}
       {!analytics.isLoading && !analytics.error && errors.length === 0 ? (
         <section className="card empty-state" style={{ marginTop: 16 }}>{t("overview.noRecentErrors")}</section>
       ) : null}
@@ -52,7 +52,7 @@ export function OverviewPage() {
             <div style={{ fontSize: 12, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("overview.flowTitle")}</div>
             <div style={{ marginTop: 6 }}>{t("overview.flowText")}</div>
           </div>
-          <Link className="button" to="/containers">{t("common.chooseService")}</Link>
+          <Link className="button" to="/runtime-targets">{t("common.chooseService")}</Link>
         </div>
       </section>
       <div style={{ marginTop: 16 }}>

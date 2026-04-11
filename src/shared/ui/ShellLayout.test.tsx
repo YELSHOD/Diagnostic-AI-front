@@ -39,6 +39,7 @@ describe("ShellLayout profile menu", () => {
 
     await userEvent.click(screen.getByRole("button", { name: /профиль|profile/i }));
 
+    expect(screen.getByRole("link", { name: /runtime targets|runtime target|targets|мақсаттар|таргеттер/i })).toBeInTheDocument();
     expect(screen.getByText("dev.user")).toBeInTheDocument();
     expect(screen.getByText("BACKEND")).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /учетные данные|account/i })).toBeInTheDocument();

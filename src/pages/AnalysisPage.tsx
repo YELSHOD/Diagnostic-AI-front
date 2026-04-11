@@ -17,7 +17,7 @@ export function AnalysisPage() {
       <PageIntro
         title={t("analysis.title")}
         description={t("analysis.description")}
-        actions={<div style={{ display: "flex", gap: 8 }}><Link className="button" to="/logs">{t("common.openLiveLogs")}</Link><Link className="button secondary" to="/containers">{t("common.chooseService")}</Link></div>}
+        actions={<div style={{ display: "flex", gap: 8 }}><Link className="button" to="/logs">{t("common.openLiveLogs")}</Link><Link className="button secondary" to="/runtime-targets">{t("common.chooseService")}</Link></div>}
       />
       <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 16, marginBottom: 16 }}>
         <article className="card kpi-card">
