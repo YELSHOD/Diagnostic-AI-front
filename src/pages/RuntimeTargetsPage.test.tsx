@@ -77,6 +77,7 @@ describe("RuntimeTargetsPage", () => {
       </MemoryRouter>
     );
 
+    expect(screen.getByRole("heading", { name: "Runtime targets" })).toBeInTheDocument();
     expect(screen.getByText("diagnostic-ai-front")).toBeInTheDocument();
     expect(screen.getByText("LOCAL_SERVICE")).toBeInTheDocument();
     expect(screen.getByText("DOCKER_CONTAINER")).toBeInTheDocument();
@@ -121,6 +122,102 @@ describe("RuntimeTargetsPage", () => {
         logSourceRef: "/tmp/front.log",
         enabled: true
       });
+    });
+  });
+
+  it("opens edit form and updates a local runtime target", async () => {
+    const updateMutation = vi.fn().mockResolvedValue(undefined);
+    vi.mocked(useRuntimeTargets).mockReturnValue({
+      data: [
+        {
+          id: "local-front",
+          name: "diagnostic-ai-front",
+          type: "LOCAL_SERVICE",
+          status: "UP",
+          host: "localhost",
+          port: 5173,
+          healthUrl: "http://localhost:5173/actuator/health",
+          logSourceType: "FILE_TAIL",
+          logSourceRef: "/tmp/front.log",
+          metadata: {}
+        }
+      ],
+      isLoading: false,
+      error: null
+    } as never);
+    vi.mocked(useUpdateRuntimeTarget).mockReturnValue({
+      mutateAsync: updateMutation,
+      isPending: false
+    } as never);
+
+    render(
+      <MemoryRouter>
+        <RuntimeTargetsPage />
+      </MemoryRouter>
+    );
+
+    fireEvent.click(screen.getByRole("button", { name: "Edit" }));
+    fireEvent.change(screen.getByLabelText("Port"), { target: { value: "5174" } });
+    fireEvent.change(screen.getByLabelText("Log source"), { target: { value: "HTTP_INGEST" } });
+    fireEvent.change(screen.getByLabelText("Log reference"), { target: { value: "front-service" } });
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "Save changes" }));
+    });
+
+    await waitFor(() => {
+      expect(updateMutation).toHaveBeenCalledWith({
+        id: "local-front",
+        payload: {
+          name: "diagnostic-ai-front",
+          host: "localhost",
+          port: 5174,
+          healthUrl: "http://localhost:5173/actuator/health",
+          logSourceType: "HTTP_INGEST",
+          logSourceRef: "front-service",
+          enabled: true
+        }
+      });
+    });
+  });
+
+  it("deletes a local runtime target", async () => {
+    const deleteMutation = vi.fn().mockResolvedValue(undefined);
+    vi.mocked(useRuntimeTargets).mockReturnValue({
+      data: [
+        {
+          id: "local-front",
+          name: "diagnostic-ai-front",
+          type: "LOCAL_SERVICE",
+          status: "UP",
+          host: "localhost",
+          port: 5173,
+          healthUrl: "http://localhost:5173/actuator/health",
+          logSourceType: "FILE_TAIL",
+          logSourceRef: "/tmp/front.log",
+          metadata: {}
+        }
+      ],
+      isLoading: false,
+      error: null
+    } as never);
+    vi.mocked(useDeleteRuntimeTarget).mockReturnValue({
+      mutateAsync: deleteMutation,
+      isPending: false
+    } as never);
+
+    render(
+      <MemoryRouter>
+        <RuntimeTargetsPage />
+      </MemoryRouter>
+    );
+
+    await act(async () => {
+      fireEvent.click(screen.getByRole("button", { name: "Delete" }));
+    });
+
+    await waitFor(() => {
+      expect(deleteMutation).toHaveBeenCalledWith("local-front");
     });
   });
 });
