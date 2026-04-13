@@ -1130,6 +1130,130 @@ a {
   gap: 18px;
 }
 
+.settings-page {
+  display: grid;
+  gap: 18px;
+}
+
+.settings-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(280px, 0.86fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.settings-sidebar {
+  display: grid;
+  gap: 16px;
+}
+
+.settings-panel {
+  border-radius: 18px;
+  padding: 18px;
+}
+
+.settings-panel-header {
+  display: grid;
+  gap: 6px;
+  margin-bottom: 14px;
+}
+
+.settings-panel-header h2,
+.settings-side-card h2 {
+  margin: 0;
+  font-size: 18px;
+}
+
+.settings-panel-header p,
+.settings-side-card p,
+.settings-defaults-note {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.55;
+}
+
+.settings-panel-kicker {
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 6px;
+}
+
+.settings-field-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.settings-field-grid-compact {
+  grid-template-columns: repeat(2, minmax(140px, 1fr));
+}
+
+.settings-panel-divider {
+  height: 1px;
+  background: color-mix(in srgb, var(--border) 82%, transparent);
+  margin: 18px 0;
+}
+
+.settings-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 10px;
+}
+
+.settings-action-button {
+  width: auto;
+  min-width: 112px;
+}
+
+.settings-save-state {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  background: color-mix(in srgb, var(--bg-soft) 84%, transparent);
+}
+
+.settings-save-state.is-dirty {
+  color: var(--warn);
+  border-color: color-mix(in srgb, var(--warn) 52%, var(--border));
+}
+
+.settings-save-state.is-saved {
+  color: var(--ok);
+  border-color: color-mix(in srgb, var(--ok) 52%, var(--border));
+}
+
+.settings-presets {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.settings-side-card {
+  display: grid;
+  gap: 10px;
+}
+
+.settings-defaults-note {
+  padding: 12px 14px;
+  border-radius: 14px;
+  border: 1px solid color-mix(in srgb, var(--border) 78%, transparent);
+  background: color-mix(in srgb, var(--bg-soft) 80%, transparent);
+}
+
 .logs-console-shell {
   display: grid;
   gap: 12px;
@@ -1417,6 +1541,12 @@ a {
   .auth-landing-footer {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .settings-layout,
+  .settings-field-grid,
+  .settings-field-grid-compact {
+    grid-template-columns: 1fr;
   }
 
   .auth-landing-footer-copy {

@@ -1,7 +1,15 @@
-﻿import { LocaleSwitcher } from "@features/settings/LocaleSwitcher";
+import { useEffect, useMemo, useState } from "react";
+import { LocaleSwitcher } from "@features/settings/LocaleSwitcher";
+import { settingsDefaults, useSettingsStore } from "@features/settings/store";
 import { useI18n } from "@shared/i18n/useI18n";
 import { PageIntro } from "@shared/ui/PageIntro";
-import { useSettingsStore } from "@features/settings/store";
+
+type DraftSettings = {
+  apiBaseUrl: string;
+  wsBaseUrl: string;
+  reconnectMinMs: number;
+  reconnectMaxMs: number;
+};
 
 export function SettingsPage() {
   const { t } = useI18n();
@@ -9,48 +17,181 @@ export function SettingsPage() {
   const wsBaseUrl = useSettingsStore((s) => s.wsBaseUrl);
   const reconnectMinMs = useSettingsStore((s) => s.reconnectMinMs);
   const reconnectMaxMs = useSettingsStore((s) => s.reconnectMaxMs);
-  const setApiBaseUrl = useSettingsStore((s) => s.setApiBaseUrl);
-  const setWsBaseUrl = useSettingsStore((s) => s.setWsBaseUrl);
-  const setReconnectMinMs = useSettingsStore((s) => s.setReconnectMinMs);
-  const setReconnectMaxMs = useSettingsStore((s) => s.setReconnectMaxMs);
-  const resetDefaults = useSettingsStore((s) => s.resetDefaults);
+  const applyConnectionSettings = useSettingsStore((s) => s.applyConnectionSettings);
+  const resetConnectionDefaults = useSettingsStore((s) => s.resetConnectionDefaults);
+  const active = useMemo(
+    () => ({ apiBaseUrl, wsBaseUrl, reconnectMinMs, reconnectMaxMs }),
+    [apiBaseUrl, wsBaseUrl, reconnectMinMs, reconnectMaxMs]
+  );
+
+  const [draft, setDraft] = useState<DraftSettings>(active);
+
+  useEffect(() => {
+    setDraft(active);
+  }, [apiBaseUrl, wsBaseUrl, reconnectMinMs, reconnectMaxMs, active]);
+
+  const hasUnsavedChanges = useMemo(
+    () =>
+      draft.apiBaseUrl !== active.apiBaseUrl ||
+      draft.wsBaseUrl !== active.wsBaseUrl ||
+      draft.reconnectMinMs !== active.reconnectMinMs ||
+      draft.reconnectMaxMs !== active.reconnectMaxMs,
+    [active, draft]
+  );
+
+  function patchDraft(patch: Partial<DraftSettings>) {
+    setDraft((current) => ({ ...current, ...patch }));
+  }
+
+  function handleSave() {
+    applyConnectionSettings(draft);
+  }
+
+  function handleResetDraft() {
+    setDraft(active);
+  }
+
+  function handleResetDefaults() {
+    resetConnectionDefaults();
+  }
+
+  function applyLocalPreset(port: 8080 | 8081) {
+    patchDraft({
+      apiBaseUrl: `http://localhost:${port}`,
+      wsBaseUrl: `ws://localhost:${port}`
+    });
+  }
 
   return (
-    <div>
+    <div className="settings-page">
       <PageIntro
         title={t("settings.title")}
         description={t("settings.description")}
-        actions={<button className="button secondary" onClick={resetDefaults}>{t("common.resetDefaults")}</button>}
+        actions={
+          <div className="settings-actions">
+            <span className={`settings-save-state ${hasUnsavedChanges ? "is-dirty" : "is-saved"}`}>
+              {hasUnsavedChanges ? t("settings.unsavedChanges") : t("settings.saved")}
+            </span>
+            <button
+              type="button"
+              className="button secondary settings-action-button"
+              onClick={handleResetDraft}
+              disabled={!hasUnsavedChanges}
+            >
+              {t("settings.resetDraft")}
+            </button>
+            <button
+              type="button"
+              className="button secondary settings-action-button"
+              onClick={handleResetDefaults}
+            >
+              {t("common.resetDefaults")}
+            </button>
+            <button
+              type="button"
+              className="button settings-action-button"
+              onClick={handleSave}
+              disabled={!hasUnsavedChanges}
+            >
+              {t("settings.save")}
+            </button>
+          </div>
+        }
       />
-      <section className="card" style={{ maxWidth: 760 }}>
-        <div style={{ marginBottom: 16, color: "var(--text-muted)", maxWidth: 680 }}>
-          {t("settings.helper")}
-        </div>
-        <div style={{ marginBottom: 16 }}>
-          <LocaleSwitcher />
-        </div>
-        <div style={{ display: "grid", gap: 12 }}>
-          <label>
-            {t("settings.apiBaseUrl")}
-            <input className="input" style={{ display: "block", width: "100%" }} value={apiBaseUrl} onChange={(e) => setApiBaseUrl(e.target.value)} />
-          </label>
-          <label>
-            {t("settings.wsBaseUrl")}
-            <input className="input" style={{ display: "block", width: "100%" }} value={wsBaseUrl} onChange={(e) => setWsBaseUrl(e.target.value)} />
-          </label>
-          <label>
-            {t("settings.reconnectMin")}
-            <input className="input" type="number" value={reconnectMinMs} onChange={(e) => setReconnectMinMs(Number(e.target.value))} />
-          </label>
-          <label>
-            {t("settings.reconnectMax")}
-            <input className="input" type="number" value={reconnectMaxMs} onChange={(e) => setReconnectMaxMs(Number(e.target.value))} />
-          </label>
-        </div>
-        <div className="card" style={{ marginTop: 16, background: "var(--bg-soft)" }}>
-          {t("settings.defaultsNote")}
-        </div>
-      </section>
+
+      <div className="settings-layout">
+        <section className="card settings-panel">
+          <div className="settings-panel-header">
+            <div>
+              <div className="settings-panel-kicker">{t("settings.connectionTitle")}</div>
+              <h2>{t("settings.connectionTitle")}</h2>
+            </div>
+            <p>{t("settings.transportHelper")}</p>
+          </div>
+
+          <div className="settings-field-grid">
+            <label className="field">
+              <span>{t("settings.apiBaseUrl")}</span>
+              <input
+                className="input"
+                value={draft.apiBaseUrl}
+                onChange={(e) => patchDraft({ apiBaseUrl: e.target.value })}
+              />
+            </label>
+
+            <label className="field">
+              <span>{t("settings.wsBaseUrl")}</span>
+              <input
+                className="input"
+                value={draft.wsBaseUrl}
+                onChange={(e) => patchDraft({ wsBaseUrl: e.target.value })}
+              />
+            </label>
+          </div>
+
+          <div className="settings-panel-divider" />
+
+          <div className="settings-panel-header">
+            <div>
+              <div className="settings-panel-kicker">{t("settings.reconnectTitle")}</div>
+              <h2>{t("settings.reconnectTitle")}</h2>
+            </div>
+            <p>{t("settings.reconnectHelper")}</p>
+          </div>
+
+          <div className="settings-field-grid settings-field-grid-compact">
+            <label className="field">
+              <span>{t("settings.reconnectMin")}</span>
+              <input
+                className="input"
+                type="number"
+                value={draft.reconnectMinMs}
+                onChange={(e) => patchDraft({ reconnectMinMs: Number(e.target.value) || 0 })}
+              />
+            </label>
+
+            <label className="field">
+              <span>{t("settings.reconnectMax")}</span>
+              <input
+                className="input"
+                type="number"
+                value={draft.reconnectMaxMs}
+                onChange={(e) => patchDraft({ reconnectMaxMs: Number(e.target.value) || 0 })}
+              />
+            </label>
+          </div>
+        </section>
+
+        <aside className="settings-sidebar">
+          <section className="card settings-panel settings-side-card">
+            <div className="settings-panel-kicker">{t("settings.presetsTitle")}</div>
+            <h2>{t("settings.presetsTitle")}</h2>
+            <p>{t("settings.presetsHelper")}</p>
+
+            <div className="settings-presets">
+              <button type="button" className="button secondary" onClick={() => applyLocalPreset(8080)}>
+                {t("settings.preset8080")}
+              </button>
+              <button type="button" className="button secondary" onClick={() => applyLocalPreset(8081)}>
+                {t("settings.preset8081")}
+              </button>
+            </div>
+
+            <div className="settings-defaults-note">
+              {t("settings.defaultsNote")}
+              <br />
+              {settingsDefaults.apiBaseUrl} / {settingsDefaults.wsBaseUrl}
+            </div>
+          </section>
+
+          <section className="card settings-panel settings-side-card">
+            <div className="settings-panel-kicker">{t("locale.label")}</div>
+            <h2>{t("settings.workspaceTitle")}</h2>
+            <p>{t("settings.workspaceHelper")}</p>
+            <LocaleSwitcher compact />
+          </section>
+        </aside>
+      </div>
     </div>
   );
 }
