@@ -15,7 +15,12 @@ vi.mock("@entities/runtime-target/api", () => ({
   useRuntimeTargets: vi.fn()
 }));
 
+vi.mock("@features/ai/api", () => ({
+  diagnoseLogsWithGemini: vi.fn()
+}));
+
 import { useRuntimeTargets } from "@entities/runtime-target/api";
+import { diagnoseLogsWithGemini } from "@features/ai/api";
 
 function toDatetimeLocalValue(input: string) {
   const date = new Date(input);
@@ -45,6 +50,7 @@ describe("LiveLogsPage", () => {
     vi.useRealTimers();
     useSettingsStore.getState().setLocale("en");
     vi.mocked(useRuntimeTargets).mockReset();
+    vi.mocked(diagnoseLogsWithGemini).mockReset();
     vi.mocked(useRuntimeTargets).mockReturnValue({
       data: [
         {
@@ -263,5 +269,54 @@ describe("LiveLogsPage", () => {
     fireEvent.scroll(viewport);
 
     expect(screen.getByRole("button", { name: /resume live stream/i })).toBeInTheDocument();
+  });
+
+  it("opens Gemini diagnosis panel and disables submit without a question", async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+    await user.click(screen.getByRole("button", { name: /diagnose with gemini/i }));
+
+    expect(screen.getByRole("heading", { name: /ai diagnosis/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /run diagnosis/i })).toBeDisabled();
+  });
+
+  it("submits the last visible log lines to Gemini and renders the diagnosis", async () => {
+    const user = userEvent.setup();
+    vi.mocked(diagnoseLogsWithGemini).mockResolvedValue({
+      provider: "google",
+      model: "gemini-2.5-flash",
+      promptVersion: "v1",
+      summary: "Likely an authentication mismatch after login.",
+      bullets: ["Check JWT expiry.", "Verify websocket reconnect path."],
+      rawText: "Detailed response"
+    });
+
+    renderPage();
+    await user.click(screen.getByRole("button", { name: /diagnose with gemini/i }));
+    await user.type(screen.getByLabelText(/^question$/i), "Why did this fail?");
+    await user.click(screen.getByRole("button", { name: /run diagnosis/i }));
+
+    expect(vi.mocked(diagnoseLogsWithGemini)).toHaveBeenCalledWith({
+      service: "diagnosticserviceai",
+      question: "Why did this fail?",
+      logLines: ["2026-04-11T12:00:00Z INFO [diagnosticserviceai] User login succeeded"]
+    });
+
+    expect(await screen.findByText(/likely an authentication mismatch/i)).toBeInTheDocument();
+    expect(screen.getByText(/check jwt expiry/i)).toBeInTheDocument();
+    expect(screen.getByText(/gemini-2.5-flash/i)).toBeInTheDocument();
+  });
+
+  it("shows a readable Gemini error inline", async () => {
+    const user = userEvent.setup();
+    vi.mocked(diagnoseLogsWithGemini).mockRejectedValue(new Error("Provider timeout"));
+
+    renderPage();
+    await user.click(screen.getByRole("button", { name: /diagnose with gemini/i }));
+    await user.type(screen.getByLabelText(/^question$/i), "What happened?");
+    await user.click(screen.getByRole("button", { name: /run diagnosis/i }));
+
+    expect(await screen.findByText(/provider timeout/i)).toBeInTheDocument();
   });
 });

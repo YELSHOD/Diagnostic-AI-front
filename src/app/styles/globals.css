@@ -1099,7 +1099,9 @@ a {
 }
 
 :root[data-theme="light"] .logs-console-range-panel,
-:root[data-theme="light"] .logs-console-error-panel {
+:root[data-theme="light"] .logs-console-error-panel,
+:root[data-theme="light"] .logs-ai-panel,
+:root[data-theme="light"] .logs-ai-result {
   background: linear-gradient(180deg, rgba(252, 254, 255, 0.98), rgba(242, 247, 252, 0.96));
   border-color: color-mix(in srgb, var(--border) 84%, white);
 }
@@ -1637,6 +1639,106 @@ a {
   border-radius: 18px;
   padding: 16px;
   background: color-mix(in srgb, var(--surface) 88%, #08111f 12%);
+}
+
+.logs-ai-panel,
+.logs-ai-result {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--border);
+  border-radius: 18px;
+  padding: 16px;
+  background: color-mix(in srgb, var(--surface) 90%, #08111f 10%);
+}
+
+.logs-ai-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.logs-ai-header h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+}
+
+.logs-ai-header p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.5;
+  max-width: 760px;
+}
+
+.logs-ai-textarea {
+  min-height: 104px;
+  resize: vertical;
+}
+
+.logs-ai-inline-hint,
+.logs-ai-error {
+  font-size: 12px;
+}
+
+.logs-ai-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.logs-ai-result-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.logs-ai-result-meta span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-soft) 88%, transparent);
+  color: var(--text-muted);
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.logs-ai-bullets {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+}
+
+.logs-ai-bullets li {
+  color: var(--text);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+.logs-ai-raw summary {
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.logs-ai-raw pre {
+  margin: 10px 0 0;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(2, 6, 23, 0.72);
+  color: var(--text-muted);
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font-size: 12px;
+  line-height: 1.45;
 }
 
 .logs-console-error-header {

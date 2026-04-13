@@ -171,7 +171,22 @@ export const messages = {
       },
       noLinesYet: "Пока ни одна строка лога не совпадает с текущим потоком. Если сервис тихий, подержи сокет открытым или ослабь активные фильтры.",
       latestError: "Последнее событие ошибки",
-      noStructuredErrors: "Пока в этом потоке не найдено структурированных ошибок."
+      noStructuredErrors: "Пока в этом потоке не найдено структурированных ошибок.",
+      ai: {
+        action: "Диагноз через Gemini",
+        title: "AI diagnosis",
+        helper: "В запрос уйдут последние 50 видимых строк после текущих фильтров и time range.",
+        question: "Вопрос",
+        questionPlaceholder: "Почему сервис начал падать и что проверить первым?",
+        visibleCountPrefix: "Видимых строк для анализа",
+        noVisibleLogs: "Нет видимых строк для анализа. Ослабь фильтры или дождись новых логов.",
+        cancel: "Отмена",
+        submit: "Запустить диагноз",
+        loading: "Диагностика...",
+        failed: "Не удалось получить ответ Gemini.",
+        resultTitle: "Результат AI diagnosis",
+        rawToggle: "Показать raw response"
+      }
     },
     analysis: {
       title: "Аналитика",
@@ -467,7 +482,22 @@ export const messages = {
       },
       noLinesYet: "Әзірге ешбір лог жолы ағымдағы ағынға сәйкес келмейді. Егер сервис тыныш болса, сокетті ашық қалдыр немесе белсенді фильтрлерді әлсірет.",
       latestError: "Соңғы қате оқиғасы",
-      noStructuredErrors: "Әзірге бұл ағында құрылымдалған қателер табылған жоқ."
+      noStructuredErrors: "Әзірге бұл ағында құрылымдалған қателер табылған жоқ.",
+      ai: {
+        action: "Gemini арқылы талдау",
+        title: "AI diagnosis",
+        helper: "Сұрауға ағымдағы фильтрлер мен time range бойынша көрінетін соңғы 50 жол жіберіледі.",
+        question: "Сұрақ",
+        questionPlaceholder: "Қызмет неге қате бере бастады және алдымен нені тексеру керек?",
+        visibleCountPrefix: "Талдауға көрінетін жолдар",
+        noVisibleLogs: "Талдауға көрінетін жолдар жоқ. Фильтрлерді әлсірет немесе жаңа логтарды күт.",
+        cancel: "Болдырмау",
+        submit: "Талдауды іске қосу",
+        loading: "Талдау жүріп жатыр...",
+        failed: "Gemini жауабын алу мүмкін болмады.",
+        resultTitle: "AI diagnosis нәтижесі",
+        rawToggle: "Raw response көрсету"
+      }
     },
     analysis: {
       title: "Талдау",
@@ -763,7 +793,22 @@ export const messages = {
       },
       noLinesYet: "No log lines match the current stream yet. If the service is quiet, keep the socket open or relax the active filters.",
       latestError: "Latest Error Event",
-      noStructuredErrors: "No structured errors have been detected in this stream yet."
+      noStructuredErrors: "No structured errors have been detected in this stream yet.",
+      ai: {
+        action: "Diagnose with Gemini",
+        title: "AI diagnosis",
+        helper: "The latest 50 visible lines from the current filtered buffer will be sent with your question.",
+        question: "Question",
+        questionPlaceholder: "Why did this service start failing and what should I check first?",
+        visibleCountPrefix: "Visible lines ready for diagnosis",
+        noVisibleLogs: "No visible lines are available for diagnosis. Relax filters or wait for new logs.",
+        cancel: "Cancel",
+        submit: "Run diagnosis",
+        loading: "Diagnosing...",
+        failed: "Gemini diagnosis failed.",
+        resultTitle: "AI diagnosis result",
+        rawToggle: "Show raw response"
+      }
     },
     analysis: {
       title: "Analysis",

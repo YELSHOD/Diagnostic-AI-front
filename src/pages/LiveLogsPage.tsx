@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { Link, useSearchParams } from "react-router-dom";
 import { useRuntimeTargets } from "@entities/runtime-target/api";
+import { diagnoseLogsWithGemini, type AiDiagnosisResponse } from "@features/ai/api";
 import { useLogsSocket } from "@features/realtime/useLogsSocket";
 import { useRealtimeStore } from "@features/realtime/store";
 import { useSettingsStore } from "@features/settings/store";
@@ -77,6 +78,20 @@ function formatRangeSummaryDate(timestamp: number) {
   }).format(new Date(timestamp));
 }
 
+function buildVisibleLogLines(
+  lines: Array<{
+    ts: string;
+    service: string;
+    payload: { message: string; level?: string | null };
+  }>
+) {
+  return lines.slice(-50).map((line) => {
+    const parsed = parseConsoleSource(line.payload.message, line.service);
+    const level = line.payload.level ?? "INFO";
+    return `${line.ts} ${level} [${parsed.source}] ${parsed.message}`;
+  });
+}
+
 export function LiveLogsPage() {
   const { t } = useI18n();
   const [params] = useSearchParams();
@@ -87,6 +102,11 @@ export function LiveLogsPage() {
   const [activeTimeRange, setActiveTimeRange] = useState<ActiveTimeRange>({ kind: "all" });
   const [customRangeDraft, setCustomRangeDraft] = useState<CustomRangeDraft>({ from: "", to: "" });
   const [customPanelOpen, setCustomPanelOpen] = useState(false);
+  const [diagnoseOpen, setDiagnoseOpen] = useState(false);
+  const [question, setQuestion] = useState("");
+  const [diagnosePending, setDiagnosePending] = useState(false);
+  const [diagnoseError, setDiagnoseError] = useState<string | null>(null);
+  const [diagnosis, setDiagnosis] = useState<AiDiagnosisResponse | null>(null);
   const runtimeTargetId = params.get("runtimeTargetId") ?? params.get("containerId") ?? "";
   const runtimeTargets = useRuntimeTargets();
   const consoleRef = useRef<HTMLDivElement | null>(null);
@@ -125,6 +145,7 @@ export function LiveLogsPage() {
   const latestError = errors.length > 0 ? errors[errors.length - 1] : null;
   const hasAnyLogs = logs.length > 0;
   const hasTimeRestriction = activeTimeRange.kind !== "all";
+  const visibleLogLines = useMemo(() => buildVisibleLogLines(filtered), [filtered]);
   const customRangeInvalid = useMemo(() => {
     const from = parseDatetimeLocal(customRangeDraft.from);
     const to = parseDatetimeLocal(customRangeDraft.to);
@@ -210,6 +231,29 @@ export function LiveLogsPage() {
     setCustomPanelOpen(false);
   }
 
+  async function handleDiagnoseSubmit() {
+    if (!runtimeTargetId || !selectedTargetName || !question.trim() || visibleLogLines.length === 0) {
+      return;
+    }
+
+    setDiagnosePending(true);
+    setDiagnoseError(null);
+
+    try {
+      const response = await diagnoseLogsWithGemini({
+        service: selectedTargetName,
+        question: question.trim(),
+        logLines: visibleLogLines
+      });
+      setDiagnosis(response);
+    } catch (error) {
+      setDiagnosis(null);
+      setDiagnoseError(error instanceof Error ? error.message : t("logs.ai.failed"));
+    } finally {
+      setDiagnosePending(false);
+    }
+  }
+
   function isRangeActive(key: QuickRangeKey) {
     return (
       (key === "all" && activeTimeRange.kind === "all") ||
@@ -262,6 +306,17 @@ export function LiveLogsPage() {
             </div>
 
             <div className="logs-console-toolbar-actions">
+              <button
+                type="button"
+                className="button logs-console-action"
+                disabled={!runtimeTargetId}
+                onClick={() => {
+                  setDiagnoseOpen((value) => !value);
+                  setDiagnoseError(null);
+                }}
+              >
+                {t("logs.ai.action")}
+              </button>
               <button
                 type="button"
                 className="button secondary logs-console-action"
@@ -375,6 +430,52 @@ export function LiveLogsPage() {
 
         {runtimeTargetId ? (
           <>
+            {diagnoseOpen ? (
+              <section className="logs-ai-panel">
+                <div className="logs-ai-header">
+                  <div>
+                    <h3>{t("logs.ai.title")}</h3>
+                    <p>{t("logs.ai.helper")}</p>
+                  </div>
+                  <span className="badge">{selectedTargetName}</span>
+                </div>
+                <label className="field">
+                  <span>{t("logs.ai.question")}</span>
+                  <textarea
+                    aria-label={t("logs.ai.question")}
+                    className="textarea logs-ai-textarea"
+                    placeholder={t("logs.ai.questionPlaceholder")}
+                    rows={4}
+                    value={question}
+                    onChange={(e) => setQuestion(e.target.value)}
+                  />
+                </label>
+                <div className="logs-ai-inline-hint">
+                  {visibleLogLines.length > 0
+                    ? `${t("logs.ai.visibleCountPrefix")}: ${visibleLogLines.length}`
+                    : t("logs.ai.noVisibleLogs")}
+                </div>
+                {diagnoseError ? <div className="card-error logs-ai-error">{diagnoseError}</div> : null}
+                <div className="logs-ai-actions">
+                  <button
+                    type="button"
+                    className="button secondary logs-console-action"
+                    onClick={() => setDiagnoseOpen(false)}
+                  >
+                    {t("logs.ai.cancel")}
+                  </button>
+                  <button
+                    type="button"
+                    className="button logs-console-action"
+                    disabled={!question.trim() || visibleLogLines.length === 0 || diagnosePending}
+                    onClick={handleDiagnoseSubmit}
+                  >
+                    {diagnosePending ? t("logs.ai.loading") : t("logs.ai.submit")}
+                  </button>
+                </div>
+              </section>
+            ) : null}
+
             <div
               ref={consoleRef}
               className="logs-console-viewport"
@@ -451,6 +552,34 @@ export function LiveLogsPage() {
                 <pre className="logs-console-error-frames">
                   {(latestError.payload.topFrames ?? []).join("\n")}
                 </pre>
+              </section>
+            ) : null}
+
+            {diagnosis ? (
+              <section className="logs-ai-result">
+                <div className="logs-ai-header">
+                  <div>
+                    <h3>{t("logs.ai.resultTitle")}</h3>
+                    <p>{diagnosis.summary}</p>
+                  </div>
+                  <span className="badge">{selectedTargetName}</span>
+                </div>
+                <div className="logs-ai-result-meta">
+                  <span>{diagnosis.provider}</span>
+                  <span>{diagnosis.model}</span>
+                  <span>{diagnosis.promptVersion}</span>
+                </div>
+                {diagnosis.bullets.length > 0 ? (
+                  <ul className="logs-ai-bullets">
+                    {diagnosis.bullets.map((bullet, index) => (
+                      <li key={`${bullet}-${index}`}>{bullet}</li>
+                    ))}
+                  </ul>
+                ) : null}
+                <details className="logs-ai-raw">
+                  <summary>{t("logs.ai.rawToggle")}</summary>
+                  <pre>{diagnosis.rawText}</pre>
+                </details>
               </section>
             ) : null}
           </>
