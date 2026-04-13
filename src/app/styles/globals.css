@@ -1677,6 +1677,12 @@ a {
   resize: vertical;
 }
 
+.logs-ai-context {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .logs-ai-inline-hint,
 .logs-ai-error {
   font-size: 12px;
@@ -1721,6 +1727,26 @@ a {
   color: var(--text);
   font-size: 13px;
   line-height: 1.45;
+}
+
+.logs-ai-section {
+  display: grid;
+  gap: 8px;
+}
+
+.logs-ai-section h4 {
+  margin: 0;
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+}
+
+.logs-ai-section p {
+  margin: 0;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text);
 }
 
 .logs-ai-raw summary {

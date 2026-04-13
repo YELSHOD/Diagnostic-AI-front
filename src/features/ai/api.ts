@@ -4,6 +4,14 @@ export type AiDiagnosisRequest = {
   service: string;
   question: string;
   logLines: string[];
+  timeRange: {
+    mode: "all" | "relative" | "custom";
+    label: string;
+    from: string | null;
+    to: string | null;
+  };
+  levelFilter: string;
+  textFilter: string;
 };
 
 export type AiDiagnosisResponse = {
@@ -11,7 +19,10 @@ export type AiDiagnosisResponse = {
   model: string;
   promptVersion: string;
   summary: string;
-  bullets: string[];
+  timeline: string[];
+  probableRootCause: string;
+  evidence: string[];
+  nextChecks: string[];
   rawText: string;
 };
 

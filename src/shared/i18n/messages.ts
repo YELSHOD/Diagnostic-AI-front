@@ -185,6 +185,12 @@ export const messages = {
         loading: "Диагностика...",
         failed: "Не удалось получить ответ Gemini.",
         resultTitle: "Результат AI diagnosis",
+        levelFilter: "Уровень",
+        textFilter: "Текст",
+        rootCauseTitle: "Вероятная root cause",
+        timelineTitle: "Timeline",
+        evidenceTitle: "Evidence",
+        nextChecksTitle: "Next checks",
         rawToggle: "Показать raw response"
       }
     },
@@ -496,6 +502,12 @@ export const messages = {
         loading: "Талдау жүріп жатыр...",
         failed: "Gemini жауабын алу мүмкін болмады.",
         resultTitle: "AI diagnosis нәтижесі",
+        levelFilter: "Деңгей",
+        textFilter: "Мәтін",
+        rootCauseTitle: "Ықтимал root cause",
+        timelineTitle: "Timeline",
+        evidenceTitle: "Evidence",
+        nextChecksTitle: "Next checks",
         rawToggle: "Raw response көрсету"
       }
     },
@@ -807,6 +819,12 @@ export const messages = {
         loading: "Diagnosing...",
         failed: "Gemini diagnosis failed.",
         resultTitle: "AI diagnosis result",
+        levelFilter: "Level",
+        textFilter: "Text",
+        rootCauseTitle: "Probable root cause",
+        timelineTitle: "Timeline",
+        evidenceTitle: "Evidence",
+        nextChecksTitle: "Next checks",
         rawToggle: "Show raw response"
       }
     },

@@ -283,27 +283,55 @@ describe("LiveLogsPage", () => {
 
   it("submits the last visible log lines to Gemini and renders the diagnosis", async () => {
     const user = userEvent.setup();
+    useRealtimeStore.setState({
+      ...useRealtimeStore.getState(),
+      logs: [
+        {
+          ts: new Date().toISOString(),
+          service: "diagnosticserviceai",
+          payload: {
+            message: "User login succeeded",
+            level: "INFO",
+            traceId: null
+          }
+        }
+      ]
+    });
     vi.mocked(diagnoseLogsWithGemini).mockResolvedValue({
       provider: "google",
       model: "gemini-2.5-flash",
       promptVersion: "v1",
       summary: "Likely an authentication mismatch after login.",
-      bullets: ["Check JWT expiry.", "Verify websocket reconnect path."],
+      timeline: ["12:00 login succeeded", "12:01 websocket rejected expired JWT"],
+      probableRootCause: "Expired JWT during reconnect",
+      evidence: ["JWT expired before reconnect", "socket reused stale token"],
+      nextChecks: ["Check JWT expiry.", "Verify websocket reconnect path."],
       rawText: "Detailed response"
     });
 
     renderPage();
     await user.click(screen.getByRole("button", { name: /diagnose with gemini/i }));
+    await user.click(screen.getByRole("button", { name: /^15m$/i }));
     await user.type(screen.getByLabelText(/^question$/i), "Why did this fail?");
     await user.click(screen.getByRole("button", { name: /run diagnosis/i }));
 
     expect(vi.mocked(diagnoseLogsWithGemini)).toHaveBeenCalledWith({
       service: "diagnosticserviceai",
       question: "Why did this fail?",
-      logLines: ["2026-04-11T12:00:00Z INFO [diagnosticserviceai] User login succeeded"]
+      logLines: [expect.stringMatching(/INFO \[diagnosticserviceai] User login succeeded$/)],
+      timeRange: {
+        mode: "relative",
+        label: "Showing: 15m",
+        from: null,
+        to: null
+      },
+      levelFilter: "",
+      textFilter: ""
     });
 
     expect(await screen.findByText(/likely an authentication mismatch/i)).toBeInTheDocument();
+    expect(screen.getByText(/expired jwt during reconnect/i)).toBeInTheDocument();
+    expect(screen.getByText(/12:01 websocket rejected expired jwt/i)).toBeInTheDocument();
     expect(screen.getByText(/check jwt expiry/i)).toBeInTheDocument();
     expect(screen.getByText(/gemini-2.5-flash/i)).toBeInTheDocument();
   });

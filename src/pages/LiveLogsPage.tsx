@@ -92,6 +92,10 @@ function buildVisibleLogLines(
   });
 }
 
+function toIsoOrNull(value: number | null) {
+  return value === null ? null : new Date(value).toISOString();
+}
+
 export function LiveLogsPage() {
   const { t } = useI18n();
   const [params] = useSearchParams();
@@ -243,7 +247,10 @@ export function LiveLogsPage() {
       const response = await diagnoseLogsWithGemini({
         service: selectedTargetName,
         question: question.trim(),
-        logLines: visibleLogLines
+        logLines: visibleLogLines,
+        timeRange: diagnosisTimeRange,
+        levelFilter: level,
+        textFilter: text.trim()
       });
       setDiagnosis(response);
     } catch (error) {
@@ -271,6 +278,33 @@ export function LiveLogsPage() {
     }
 
     return `${t("logs.activeRangePrefix")}: ${formatRangeSummaryDate(activeTimeRange.from)} - ${formatRangeSummaryDate(activeTimeRange.to)}`;
+  }, [activeTimeRange, t]);
+
+  const diagnosisTimeRange = useMemo(() => {
+    if (activeTimeRange.kind === "all") {
+      return {
+        mode: "all" as const,
+        label: t("logs.activeRangeAll"),
+        from: null,
+        to: null
+      };
+    }
+
+    if (activeTimeRange.kind === "relative") {
+      return {
+        mode: "relative" as const,
+        label: `${t("logs.activeRangePrefix")}: ${t(`logs.range.${activeTimeRange.key}`)}`,
+        from: null,
+        to: null
+      };
+    }
+
+    return {
+      mode: "custom" as const,
+      label: `${t("logs.activeRangePrefix")}: ${formatRangeSummaryDate(activeTimeRange.from)} - ${formatRangeSummaryDate(activeTimeRange.to)}`,
+      from: toIsoOrNull(activeTimeRange.from),
+      to: toIsoOrNull(activeTimeRange.to)
+    };
   }, [activeTimeRange, t]);
 
   return (
@@ -439,6 +473,11 @@ export function LiveLogsPage() {
                   </div>
                   <span className="badge">{selectedTargetName}</span>
                 </div>
+                <div className="logs-ai-context">
+                  <span className="badge">{diagnosisTimeRange.label}</span>
+                  {level ? <span className="badge">{`${t("logs.ai.levelFilter")}: ${level}`}</span> : null}
+                  {text.trim() ? <span className="badge">{`${t("logs.ai.textFilter")}: ${text.trim()}`}</span> : null}
+                </div>
                 <label className="field">
                   <span>{t("logs.ai.question")}</span>
                   <textarea
@@ -569,12 +608,41 @@ export function LiveLogsPage() {
                   <span>{diagnosis.model}</span>
                   <span>{diagnosis.promptVersion}</span>
                 </div>
-                {diagnosis.bullets.length > 0 ? (
-                  <ul className="logs-ai-bullets">
-                    {diagnosis.bullets.map((bullet, index) => (
-                      <li key={`${bullet}-${index}`}>{bullet}</li>
-                    ))}
-                  </ul>
+                {diagnosis.probableRootCause ? (
+                  <div className="logs-ai-section">
+                    <h4>{t("logs.ai.rootCauseTitle")}</h4>
+                    <p>{diagnosis.probableRootCause}</p>
+                  </div>
+                ) : null}
+                {diagnosis.timeline.length > 0 ? (
+                  <div className="logs-ai-section">
+                    <h4>{t("logs.ai.timelineTitle")}</h4>
+                    <ul className="logs-ai-bullets">
+                      {diagnosis.timeline.map((item, index) => (
+                        <li key={`${item}-${index}`}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+                {diagnosis.evidence.length > 0 ? (
+                  <div className="logs-ai-section">
+                    <h4>{t("logs.ai.evidenceTitle")}</h4>
+                    <ul className="logs-ai-bullets">
+                      {diagnosis.evidence.map((item, index) => (
+                        <li key={`${item}-${index}`}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+                {diagnosis.nextChecks.length > 0 ? (
+                  <div className="logs-ai-section">
+                    <h4>{t("logs.ai.nextChecksTitle")}</h4>
+                    <ul className="logs-ai-bullets">
+                      {diagnosis.nextChecks.map((item, index) => (
+                        <li key={`${item}-${index}`}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
                 ) : null}
                 <details className="logs-ai-raw">
                   <summary>{t("logs.ai.rawToggle")}</summary>
