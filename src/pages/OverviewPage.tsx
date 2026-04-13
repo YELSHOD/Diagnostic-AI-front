@@ -62,20 +62,30 @@ export function OverviewPage() {
         <section className="card">
           <h3 style={{ marginTop: 0 }}>{t("overview.topExceptions")}</h3>
           {(analytics.data?.topExceptionTypes ?? []).length === 0 ? <div style={{ color: "var(--text-muted)" }}>{t("overview.noExceptions")}</div> : null}
-          <table className="table">
+          <table className="table analytics-table">
             <thead><tr><th>{t("overview.type")}</th><th>{t("overview.count")}</th></tr></thead>
             <tbody>
-              {(analytics.data?.topExceptionTypes ?? []).map((x) => <tr key={x.key}><td>{x.key}</td><td>{x.count}</td></tr>)}
+              {(analytics.data?.topExceptionTypes ?? []).map((x) => (
+                <tr key={x.key}>
+                  <td><div className="analytics-key-cell">{x.key}</div></td>
+                  <td>{x.count}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </section>
         <section className="card">
           <h3 style={{ marginTop: 0 }}>{t("overview.topClusters")}</h3>
           {(analytics.data?.topClusters ?? []).length === 0 ? <div style={{ color: "var(--text-muted)" }}>{t("overview.noClusters")}</div> : null}
-          <table className="table">
+          <table className="table analytics-table">
             <thead><tr><th>{t("overview.cluster")}</th><th>{t("overview.count")}</th></tr></thead>
             <tbody>
-              {(analytics.data?.topClusters ?? []).map((x) => <tr key={x.key}><td>{x.key}</td><td>{x.count}</td></tr>)}
+              {(analytics.data?.topClusters ?? []).map((x) => (
+                <tr key={x.key}>
+                  <td><div className="analytics-key-cell">{x.key}</div></td>
+                  <td>{x.count}</td>
+                </tr>
+              ))}
             </tbody>
           </table>
         </section>
