@@ -142,6 +142,14 @@ describe("LiveLogsPage", () => {
     expect(screen.getByRole("button", { name: /clear console/i })).toBeInTheDocument();
   });
 
+  it("keeps the log viewport rendered in light theme", () => {
+    document.documentElement.setAttribute("data-theme", "light");
+
+    renderPage();
+
+    expect(screen.getByTestId("logs-console")).toBeInTheDocument();
+  });
+
   it("pauses follow mode when the user scrolls upward", async () => {
     renderPage();
 

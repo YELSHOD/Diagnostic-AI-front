@@ -5,6 +5,8 @@
 :root {
   --font-ui: "Avenir Next", "Manrope", "IBM Plex Sans", "Segoe UI", sans-serif;
   --font-display: "Sora", "Avenir Next", "Space Grotesk", "IBM Plex Sans", sans-serif;
+  --control-height: 40px;
+  --control-height-compact: 34px;
   --bg: #070c14;
   --bg-soft: #0f1726;
   --card: #131f32;
@@ -19,11 +21,11 @@
 
 :root[data-theme="light"] {
   --bg: #edf3fb;
-  --bg-soft: #f8fbff;
-  --card: #ffffff;
-  --border: #cfdceb;
+  --bg-soft: #f6f9fd;
+  --card: #fcfeff;
+  --border: #d4dfec;
   --text: #14263f;
-  --text-muted: #5b708f;
+  --text-muted: #5d7290;
   --accent: #0d8b82;
   --danger: #cc4a4a;
   --warn: #9b6a08;
@@ -914,7 +916,7 @@ a {
 .card {
   background: color-mix(in srgb, var(--card) 92%, transparent);
   border: 1px solid var(--border);
-  border-radius: 14px;
+  border-radius: 16px;
   padding: 14px;
   box-shadow: 0 18px 48px rgba(3, 8, 18, 0.22);
   backdrop-filter: blur(10px);
@@ -992,9 +994,9 @@ a {
 .table th,
 .table td {
   border-bottom: 1px solid var(--border);
-  padding: 10px;
+  padding: 9px 10px;
   text-align: left;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .badge {
@@ -1014,7 +1016,9 @@ a {
   background: var(--bg-soft);
   color: var(--text);
   border-radius: 10px;
-  padding: 12px 14px;
+  min-height: var(--control-height);
+  padding: 10px 12px;
+  font-size: 13px;
 }
 
 .button {
@@ -1027,7 +1031,23 @@ a {
 }
 
 .button.secondary {
-  background: transparent;
+  background: color-mix(in srgb, var(--bg-soft) 84%, transparent);
+}
+
+:root[data-theme="light"] .sidebar,
+:root[data-theme="light"] .shell-header,
+:root[data-theme="light"] .card,
+:root[data-theme="light"] .topbar {
+  box-shadow: 0 16px 38px rgba(20, 38, 63, 0.06);
+}
+
+:root[data-theme="light"] .logs-console-shell {
+  gap: 14px;
+}
+
+:root[data-theme="light"] .logs-console-toolbar {
+  background: linear-gradient(180deg, rgba(247, 251, 255, 0.95), rgba(239, 245, 252, 0.9));
+  border-color: color-mix(in srgb, var(--border) 86%, white);
 }
 
 .theme-toggle {
