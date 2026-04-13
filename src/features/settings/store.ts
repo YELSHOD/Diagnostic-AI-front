@@ -1,13 +1,16 @@
-﻿import { create } from "zustand";
+import { create } from "zustand";
 import type { Locale } from "@shared/i18n/messages";
 
 type Theme = "dark" | "light";
 
-type SettingsState = {
+type ConnectionSettings = {
   apiBaseUrl: string;
   wsBaseUrl: string;
   reconnectMinMs: number;
   reconnectMaxMs: number;
+};
+
+type SettingsState = ConnectionSettings & {
   theme: Theme;
   locale: Locale;
   sidebarCollapsed: boolean;
@@ -15,6 +18,8 @@ type SettingsState = {
   setWsBaseUrl: (v: string) => void;
   setReconnectMinMs: (v: number) => void;
   setReconnectMaxMs: (v: number) => void;
+  applyConnectionSettings: (next: ConnectionSettings) => void;
+  resetConnectionDefaults: () => void;
   setTheme: (v: Theme) => void;
   setLocale: (v: Locale) => void;
   toggleSidebar: () => void;
@@ -22,7 +27,8 @@ type SettingsState = {
 };
 
 const KEY = "diagnostic-ui-settings";
-const defaults = {
+
+export const settingsDefaults = {
   apiBaseUrl: import.meta.env.VITE_API_BASE_URL ?? "http://localhost:8080",
   wsBaseUrl: import.meta.env.VITE_WS_BASE_URL ?? "ws://localhost:8080",
   reconnectMinMs: 800,
@@ -43,17 +49,28 @@ function load() {
 const initial = load();
 
 export const useSettingsStore = create<SettingsState>((set) => ({
-  apiBaseUrl: initial.apiBaseUrl ?? defaults.apiBaseUrl,
-  wsBaseUrl: initial.wsBaseUrl ?? defaults.wsBaseUrl,
-  reconnectMinMs: initial.reconnectMinMs ?? defaults.reconnectMinMs,
-  reconnectMaxMs: initial.reconnectMaxMs ?? defaults.reconnectMaxMs,
-  theme: initial.theme ?? defaults.theme,
-  locale: initial.locale ?? defaults.locale,
-  sidebarCollapsed: initial.sidebarCollapsed ?? defaults.sidebarCollapsed,
+  apiBaseUrl: initial.apiBaseUrl ?? settingsDefaults.apiBaseUrl,
+  wsBaseUrl: initial.wsBaseUrl ?? settingsDefaults.wsBaseUrl,
+  reconnectMinMs: initial.reconnectMinMs ?? settingsDefaults.reconnectMinMs,
+  reconnectMaxMs: initial.reconnectMaxMs ?? settingsDefaults.reconnectMaxMs,
+  theme: initial.theme ?? settingsDefaults.theme,
+  locale: initial.locale ?? settingsDefaults.locale,
+  sidebarCollapsed: initial.sidebarCollapsed ?? settingsDefaults.sidebarCollapsed,
   setApiBaseUrl: (apiBaseUrl) => set((state) => persist({ ...state, apiBaseUrl })),
   setWsBaseUrl: (wsBaseUrl) => set((state) => persist({ ...state, wsBaseUrl })),
   setReconnectMinMs: (reconnectMinMs) => set((state) => persist({ ...state, reconnectMinMs })),
   setReconnectMaxMs: (reconnectMaxMs) => set((state) => persist({ ...state, reconnectMaxMs })),
+  applyConnectionSettings: (next) => set((state) => persist({ ...state, ...next })),
+  resetConnectionDefaults: () =>
+    set((state) =>
+      persist({
+        ...state,
+        apiBaseUrl: settingsDefaults.apiBaseUrl,
+        wsBaseUrl: settingsDefaults.wsBaseUrl,
+        reconnectMinMs: settingsDefaults.reconnectMinMs,
+        reconnectMaxMs: settingsDefaults.reconnectMaxMs
+      })
+    ),
   setTheme: (theme) => {
     document.documentElement.setAttribute("data-theme", theme);
     set((state) => persist({ ...state, theme }));
@@ -64,9 +81,9 @@ export const useSettingsStore = create<SettingsState>((set) => ({
   },
   toggleSidebar: () => set((state) => persist({ ...state, sidebarCollapsed: !state.sidebarCollapsed })),
   resetDefaults: () => {
-    document.documentElement.setAttribute("data-theme", defaults.theme);
-    document.documentElement.lang = defaults.locale;
-    set(() => persist({ ...defaults }));
+    document.documentElement.setAttribute("data-theme", settingsDefaults.theme);
+    document.documentElement.lang = settingsDefaults.locale;
+    set(() => persist({ ...settingsDefaults }));
   }
 }));
 
