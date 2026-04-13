@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { fireEvent, render, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { MemoryRouter, Route, Routes } from "react-router-dom";
-import { beforeEach, describe, expect, it, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { useRealtimeStore } from "@features/realtime/store";
 import { useSettingsStore } from "@features/settings/store";
 import { LiveLogsPage } from "./LiveLogsPage";
@@ -16,6 +16,16 @@ vi.mock("@entities/runtime-target/api", () => ({
 }));
 
 import { useRuntimeTargets } from "@entities/runtime-target/api";
+
+function toDatetimeLocalValue(input: string) {
+  const date = new Date(input);
+  const year = date.getFullYear();
+  const month = `${date.getMonth() + 1}`.padStart(2, "0");
+  const day = `${date.getDate()}`.padStart(2, "0");
+  const hour = `${date.getHours()}`.padStart(2, "0");
+  const minute = `${date.getMinutes()}`.padStart(2, "0");
+  return `${year}-${month}-${day}T${hour}:${minute}`;
+}
 
 function renderPage(initialEntry = "/logs?runtimeTargetId=local-backend") {
   return render(
@@ -32,6 +42,7 @@ function renderPage(initialEntry = "/logs?runtimeTargetId=local-backend") {
 describe("LiveLogsPage", () => {
   beforeEach(() => {
     localStorage.clear();
+    vi.useRealTimers();
     useSettingsStore.getState().setLocale("en");
     vi.mocked(useRuntimeTargets).mockReset();
     vi.mocked(useRuntimeTargets).mockReturnValue({
@@ -84,6 +95,10 @@ describe("LiveLogsPage", () => {
       ],
       clusters: {}
     });
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 
   it("shows runtime target name in the console toolbar", () => {
@@ -148,6 +163,84 @@ describe("LiveLogsPage", () => {
     renderPage();
 
     expect(screen.getByTestId("logs-console")).toBeInTheDocument();
+  });
+
+  it("filters buffered logs by a quick time range", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-04-11T12:05:00Z"));
+    useRealtimeStore.setState({
+      ...useRealtimeStore.getState(),
+      logs: [
+        {
+          ts: "2026-04-11T11:40:00Z",
+          service: "diagnosticserviceai",
+          payload: {
+            message: "older line",
+            level: "INFO",
+            traceId: null
+          }
+        },
+        {
+          ts: "2026-04-11T12:00:00Z",
+          service: "diagnosticserviceai",
+          payload: {
+            message: "recent line",
+            level: "INFO",
+            traceId: null
+          }
+        }
+      ]
+    });
+
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: /^15m$/i }));
+
+    expect(screen.getByText(/recent line/i)).toBeInTheDocument();
+    expect(screen.queryByText(/older line/i)).not.toBeInTheDocument();
+  });
+
+  it("applies a custom time range after pressing apply", async () => {
+    const user = userEvent.setup();
+    const from = toDatetimeLocalValue("2026-04-11T11:59:00Z");
+    const to = toDatetimeLocalValue("2026-04-11T12:01:00Z");
+
+    renderPage();
+    await user.click(screen.getByRole("button", { name: /custom range/i }));
+    fireEvent.change(screen.getByLabelText(/^from$/i), { target: { value: from } });
+    fireEvent.change(screen.getByLabelText(/^to$/i), { target: { value: to } });
+    await user.click(screen.getByRole("button", { name: /^apply$/i }));
+
+    expect(screen.getByText(/user login succeeded/i)).toBeInTheDocument();
+  });
+
+  it("shows helper copy that explains time ranges only filter the streamed buffer", () => {
+    renderPage();
+
+    expect(
+      screen.getByText(/time range filters only the streamed logs already loaded in this session/i)
+    ).toBeInTheDocument();
+  });
+
+  it("shows the currently active time range summary", async () => {
+    const user = userEvent.setup();
+
+    renderPage();
+
+    expect(screen.getByLabelText(/active time range/i)).toHaveTextContent(/all streamed/i);
+
+    await user.click(screen.getByRole("button", { name: /^1h$/i }));
+
+    expect(screen.getByLabelText(/active time range/i)).toHaveTextContent(/showing: 1h/i);
+  });
+
+  it("shows a time-range-specific empty state when the selected interval has no lines", async () => {
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date("2026-04-11T13:00:00Z"));
+
+    renderPage();
+    fireEvent.click(screen.getByRole("button", { name: /^5m$/i }));
+
+    expect(screen.getByText(/no logs match the selected time range/i)).toBeInTheDocument();
   });
 
   it("pauses follow mode when the user scrolls upward", async () => {
