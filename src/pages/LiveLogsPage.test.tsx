@@ -89,8 +89,8 @@ describe("LiveLogsPage", () => {
   it("shows runtime target name in the console toolbar", () => {
     renderPage();
 
-    expect(screen.getByText(/selected runtime target: diagnosticserviceai/i)).toBeInTheDocument();
-    expect(screen.queryByText(/selected runtime target: local-backend/i)).not.toBeInTheDocument();
+    expect(screen.getAllByText("diagnosticserviceai")).toHaveLength(2);
+    expect(screen.queryByText("local-backend")).not.toBeInTheDocument();
   });
 
   it("renders a console viewport instead of dashboard KPI cards", () => {
@@ -120,17 +120,26 @@ describe("LiveLogsPage", () => {
     expect(screen.queryByText(/user login succeeded/i)).not.toBeInTheDocument();
   });
 
-  it("keeps latest error details collapsed until expanded", async () => {
+  it("keeps incident details collapsed until expanded", async () => {
     const user = userEvent.setup();
 
     renderPage();
 
     expect(screen.queryByText(/java.lang.IllegalStateException/i)).not.toBeInTheDocument();
 
-    await user.click(screen.getByRole("button", { name: /show latest error/i }));
+    await user.click(screen.getByRole("button", { name: /show incident details/i }));
 
+    expect(screen.getByRole("heading", { name: /incident details/i })).toBeInTheDocument();
     expect(screen.getByText(/java.lang.IllegalStateException/i)).toBeInTheDocument();
     expect(screen.getByText(/boom/i)).toBeInTheDocument();
+  });
+
+  it("renders compact status chips and action controls", () => {
+    renderPage();
+
+    expect(screen.getByText(/connected/i)).toHaveClass("logs-console-status-chip");
+    expect(screen.getByRole("button", { name: /pause live stream/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /clear console/i })).toBeInTheDocument();
   });
 
   it("pauses follow mode when the user scrolls upward", async () => {
@@ -152,6 +161,6 @@ describe("LiveLogsPage", () => {
 
     fireEvent.scroll(viewport);
 
-    expect(screen.getByRole("button", { name: /paused/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /resume live stream/i })).toBeInTheDocument();
   });
 });

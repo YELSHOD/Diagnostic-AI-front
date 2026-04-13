@@ -126,18 +126,44 @@ export function LiveLogsPage() {
 
       <section className="logs-console-shell">
         <header className="logs-console-toolbar">
-          <div className="logs-console-toolbar-main">
-            <div className="logs-console-toolbar-block">
-              <span className="logs-console-toolbar-label">
-                {runtimeTargetId ? `${t("logs.selected")}: ${selectedTargetName}` : t("logs.notSelected")}
-              </span>
-              <span
-                className={`logs-console-connection ${connected ? "is-connected" : "is-disconnected"}`}
-              >
-                {connected ? t("common.connected") : t("common.disconnected")}
-              </span>
+          <div className="logs-console-toolbar-primary">
+            <div className="logs-console-target-block">
+              <span className="logs-console-toolbar-label">{t("logs.targetLabel")}</span>
+              <div className="logs-console-toolbar-block">
+                <strong className="logs-console-target-name">
+                  {runtimeTargetId ? selectedTargetName : t("logs.notSelected")}
+                </strong>
+                <span className={`logs-console-status-chip ${connected ? "is-live" : "is-offline"}`}>
+                  {connected ? t("common.connected") : t("common.disconnected")}
+                </span>
+                <button
+                  type="button"
+                  className={`logs-console-follow-chip ${follow ? "is-live" : "is-paused"}`}
+                  aria-label={follow ? t("logs.pauseStream") : t("logs.resumeStream")}
+                  onClick={handleFollowToggle}
+                >
+                  {follow ? t("logs.following") : t("logs.paused")}
+                </button>
+              </div>
             </div>
 
+            <div className="logs-console-toolbar-actions">
+              <button
+                type="button"
+                className="button secondary logs-console-action"
+                onClick={handleClear}
+              >
+                {t("logs.clearConsole")}
+              </button>
+              {runtimeTargetId ? (
+                <Link className="button secondary logs-console-action" to="/runtime-targets">
+                  {t("common.changeContainer")}
+                </Link>
+              ) : null}
+            </div>
+          </div>
+
+          <div className="logs-console-toolbar-secondary">
             <div className="logs-console-toolbar-controls">
               <input
                 aria-label={t("logs.filterText")}
@@ -158,17 +184,6 @@ export function LiveLogsPage() {
                 <option value="ERROR">ERROR</option>
                 <option value="DEBUG">DEBUG</option>
               </select>
-              <button type="button" className="button secondary" onClick={handleFollowToggle}>
-                {follow ? "Following" : "Paused"}
-              </button>
-              <button type="button" className="button secondary" onClick={handleClear}>
-                Clear
-              </button>
-              {runtimeTargetId ? (
-                <Link className="button secondary" to="/runtime-targets">
-                  {t("common.changeContainer")}
-                </Link>
-              ) : null}
             </div>
           </div>
         </header>
@@ -218,26 +233,28 @@ export function LiveLogsPage() {
             </div>
 
             <div className="logs-console-footer">
-              <span className="logs-console-footer-meta">
-                {filtered.length} {filtered.length === 1 ? "line" : "lines"}
-              </span>
-              <span className="logs-console-footer-meta">
-                {errors.length} {errors.length === 1 ? "error" : "errors"}
-              </span>
+              <div className="logs-console-footer-stats">
+                <span className="logs-console-footer-meta">
+                  {filtered.length} {t("logs.linesLabel")}
+                </span>
+                <span className="logs-console-footer-meta">
+                  {errors.length} {t("logs.errorsLabel")}
+                </span>
+              </div>
               <button
                 type="button"
-                className="button secondary"
+                className="button secondary logs-console-action"
                 disabled={!latestError}
                 onClick={() => setErrorPanelOpen((value) => !value)}
               >
-                {errorPanelOpen ? "Hide latest error" : "Show latest error"}
+                {errorPanelOpen ? t("logs.hideIncidentDetails") : t("logs.showIncidentDetails")}
               </button>
             </div>
 
             {errorPanelOpen && latestError ? (
               <section className="logs-console-error-panel">
                 <div className="logs-console-error-header">
-                  <h3>{t("logs.latestError")}</h3>
+                  <h3>{t("logs.incidentDetails")}</h3>
                   <span className="badge" style={{ borderColor: "var(--danger)", color: "var(--danger)" }}>
                     {latestError.service}
                   </span>
