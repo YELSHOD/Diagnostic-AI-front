@@ -316,6 +316,7 @@ describe("LiveLogsPage", () => {
     await user.click(screen.getByRole("button", { name: /run diagnosis/i }));
 
     expect(vi.mocked(diagnoseLogsWithGemini)).toHaveBeenCalledWith({
+      mode: "diagnosis",
       service: "diagnosticserviceai",
       question: "Why did this fail?",
       logLines: [expect.stringMatching(/INFO \[diagnosticserviceai] User login succeeded$/)],

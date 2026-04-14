@@ -245,6 +245,7 @@ export function LiveLogsPage() {
 
     try {
       const response = await diagnoseLogsWithGemini({
+        mode: "diagnosis",
         service: selectedTargetName,
         question: question.trim(),
         logLines: visibleLogLines,

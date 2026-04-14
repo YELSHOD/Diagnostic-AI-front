@@ -24,7 +24,7 @@ export const messages = {
         logs: "Live Логи",
         analysis: "Аналитика",
         settings: "Настройки",
-        aiChat: "AI Чат (позже)"
+        aiChat: "AI Чат"
       }
     },
     locale: {
@@ -216,16 +216,29 @@ export const messages = {
     },
     aiChat: {
       title: "AI Чат",
-      description: "Этот экран специально оставлен в оболочке продукта, но backend chat endpoint пока не входит в текущий MVP. Он остается явно отмеченной фичей следующей волны, а не притворяется рабочим.",
+      description: "AI Chat v1 отвечает и на вопросы по логам, и на вопросы о самом приложении. Для диагностики он использует текущий Gemini diagnosis backend, а для product help опирается на встроенный контекст по страницам и возможностям продукта.",
       backToAnalysis: "Назад к аналитике",
-      planned: "Запланированная функция",
-      futureTitle: "Что эта страница будет делать позже",
-      futureText: "Будущий чат-ассистент будет отвечать на вопросы о росте кластеров, error traces, состоянии сервисов и AI diagnoses, когда backend откроет persisted incidents и chat endpoint.",
-      dissertationNote: "Для истории диссертации эта страница уже показывает AI-направление продукта, но не искажает текущий scope backend.",
-      prompt1: "Спроси, почему кластер начал расти и что изменилось в это время.",
-      prompt2: "Сравни шумные сервисы и суммируй самые частые шаблоны исключений.",
-      prompt3: "Собери логи, incidents и AI diagnosis в одно объяснение для ревью.",
-      untilReady: "Пока этих backend-контрактов нет, используй Live Logs для потока данных и Analysis для текущего cluster view."
+      modeLabel: "Режим AI",
+      modeProductHelp: "Product Help",
+      modeDiagnosis: "Diagnosis",
+      productHelpHelper: "Используй этот режим для вопросов о страницах, навигации и действиях внутри приложения.",
+      diagnosisHelper: "Используй этот режим для вопросов по логам и runtime target. При необходимости вставь логовый контекст вручную.",
+      targetLabel: "Target",
+      noTarget: "Без target",
+      questionLabel: "Вопрос",
+      questionPlaceholderProductHelp: "Например: где поменять пароль и зачем нужна страница Settings?",
+      questionPlaceholderDiagnosis: "Например: что произошло с заказом и где вероятная проблема?",
+      logContextLabel: "Логовый контекст",
+      logContextPlaceholder: "Вставь сюда строки логов, если хочешь получить diagnosis вне Live Logs.",
+      submit: "Спросить Gemini",
+      loading: "Gemini отвечает...",
+      failed: "Не удалось получить ответ Gemini.",
+      emptyState: "Задай вопрос и запусти AI, чтобы увидеть структурированный ответ здесь.",
+      summaryTitle: "Краткий ответ",
+      rootCauseTitle: "Вероятная root cause",
+      timelineTitle: "Timeline",
+      evidenceTitle: "Evidence",
+      nextChecksTitle: "Next checks"
     },
     settings: {
       title: "Настройки",
@@ -354,7 +367,7 @@ export const messages = {
         logs: "Live Логтар",
         analysis: "Талдау",
         settings: "Баптаулар",
-        aiChat: "AI Чат (кейін)"
+        aiChat: "AI Чат"
       }
     },
     locale: { label: "Тіл", ru: "RU", kz: "KZ", en: "EN" },
@@ -533,16 +546,29 @@ export const messages = {
     },
     aiChat: {
       title: "AI Чат",
-      description: "Бұл экран өнім қабатында әдейі қалдырылған, бірақ backend chat endpoint әзірге ағымдағы MVP құрамына кірмейді. Сондықтан ол істеп тұрғандай көрінбей, келесі толқынның айқын белгіленген мүмкіндігі болып қалады.",
+      description: "AI Chat v1 логтар туралы да, қолданбаның өзі туралы да сұрақтарға жауап береді. Diagnosis үшін ол ағымдағы Gemini diagnosis backend-ын қолданады, ал product help үшін өнімнің беттері мен мүмкіндіктері туралы кірістірілген контекстке сүйенеді.",
       backToAnalysis: "Талдауға оралу",
-      planned: "Жоспарланған мүмкіндік",
-      futureTitle: "Бұл бет кейін не істейді",
-      futureText: "Болашақ чат-ассистент кластер өсімі, error traces, сервис күйі және AI diagnoses туралы сұрақтарға backend persisted incidents пен chat endpoint ашқанда жауап береді.",
-      dissertationNote: "Диссертация тарихы үшін бұл бет өнімнің AI бағытын қазірдің өзінде көрсетеді, бірақ backend-тің ағымдағы scope-ын бұрмаламайды.",
-      prompt1: "Кластер неге өсе бастағанын және сол уақытта не өзгергенін сұра.",
-      prompt2: "Шулы сервистерді салыстырып, ең жиі exception үлгілерін қорытындыла.",
-      prompt3: "Логтарды, incidents пен AI diagnosis-ты бір түсіндірмеге жина.",
-      untilReady: "Бұл backend-контракттар дайын болғанша, дерек ағыны үшін Live Logs-ты, ал ағымдағы cluster view үшін Analysis-ті қолдан."
+      modeLabel: "AI режимі",
+      modeProductHelp: "Product Help",
+      modeDiagnosis: "Diagnosis",
+      productHelpHelper: "Бұл режимді қолданбадағы беттер, навигация және әрекеттер туралы сұрақтар үшін пайдалан.",
+      diagnosisHelper: "Бұл режимді логтар мен runtime target туралы сұрақтар үшін пайдалан. Қажет болса, лог контекстін қолмен енгіз.",
+      targetLabel: "Target",
+      noTarget: "Target жоқ",
+      questionLabel: "Сұрақ",
+      questionPlaceholderProductHelp: "Мысалы: парольді қайда ауыстырамын және Settings беті не үшін керек?",
+      questionPlaceholderDiagnosis: "Мысалы: тапсырыспен не болды және ықтимал мәселе қай жерде?",
+      logContextLabel: "Лог контексті",
+      logContextPlaceholder: "Live Logs-тен тыс diagnosis алу үшін лог жолдарын осында енгіз.",
+      submit: "Gemini-ден сұрау",
+      loading: "Gemini жауап беріп жатыр...",
+      failed: "Gemini жауабын алу мүмкін болмады.",
+      emptyState: "Мұнда құрылымдалған жауапты көру үшін сұрақ қойып, AI іске қос.",
+      summaryTitle: "Қысқа жауап",
+      rootCauseTitle: "Ықтимал root cause",
+      timelineTitle: "Timeline",
+      evidenceTitle: "Evidence",
+      nextChecksTitle: "Next checks"
     },
     settings: {
       title: "Баптаулар",
@@ -671,7 +697,7 @@ export const messages = {
         logs: "Live Logs",
         analysis: "Analysis",
         settings: "Settings",
-        aiChat: "AI Chat (Later)"
+        aiChat: "AI Chat"
       }
     },
     locale: { label: "Language", ru: "RU", kz: "KZ", en: "EN" },
@@ -850,16 +876,29 @@ export const messages = {
     },
     aiChat: {
       title: "AI Chat",
-      description: "This screen is kept in the product shell on purpose, but the backend chat endpoint is not part of the current MVP. It stays as a clearly marked next-wave feature instead of pretending to work.",
+      description: "AI Chat v1 answers both log-investigation questions and product-usage questions. It reuses the current Gemini diagnosis backend for diagnosis and injects product knowledge for app-help answers.",
       backToAnalysis: "Back To Analysis",
-      planned: "Planned Feature",
-      futureTitle: "What this page will do later",
-      futureText: "The future chat assistant will answer questions about cluster spikes, error traces, service health, and AI diagnoses once the backend exposes persisted incidents and a chat endpoint.",
-      dissertationNote: "For the dissertation story, this page already signals the AI direction of the product without misrepresenting the current backend scope.",
-      prompt1: "Ask why a cluster started growing and what changed around that time.",
-      prompt2: "Compare noisy services and summarize the most frequent exception patterns.",
-      prompt3: "Pull together logs, incidents, and AI diagnosis into one explanation for review.",
-      untilReady: "Until those backend contracts exist, use Live Logs for streaming data and Analysis for the current cluster view."
+      modeLabel: "AI mode",
+      modeProductHelp: "Product Help",
+      modeDiagnosis: "Diagnosis",
+      productHelpHelper: "Use this mode for questions about pages, navigation, and actions inside the application.",
+      diagnosisHelper: "Use this mode for runtime-target and log questions. Paste log context manually when needed.",
+      targetLabel: "Target",
+      noTarget: "No target",
+      questionLabel: "Question",
+      questionPlaceholderProductHelp: "For example: where do I change my password and what is the Settings page for?",
+      questionPlaceholderDiagnosis: "For example: what happened to this order and where is the likely issue?",
+      logContextLabel: "Log context",
+      logContextPlaceholder: "Paste log lines here if you want a diagnosis outside Live Logs.",
+      submit: "Ask Gemini",
+      loading: "Gemini is answering...",
+      failed: "Failed to get a Gemini answer.",
+      emptyState: "Ask a question and run AI to see a structured answer here.",
+      summaryTitle: "Summary",
+      rootCauseTitle: "Probable root cause",
+      timelineTitle: "Timeline",
+      evidenceTitle: "Evidence",
+      nextChecksTitle: "Next checks"
     },
     settings: {
       title: "Settings",

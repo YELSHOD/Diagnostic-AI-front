@@ -1,6 +1,7 @@
 import { apiRequest } from "@shared/lib/http";
 
 export type AiDiagnosisRequest = {
+  mode: "diagnosis" | "product_help";
   service: string;
   question: string;
   logLines: string[];

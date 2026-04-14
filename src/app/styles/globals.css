@@ -1767,6 +1767,103 @@ a {
   line-height: 1.45;
 }
 
+.ai-chat-shell {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  gap: 16px;
+}
+
+.ai-chat-card {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+  min-height: 420px;
+}
+
+.ai-chat-mode-switch {
+  display: inline-flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ai-chat-mode-chip {
+  width: auto;
+  min-width: 0;
+  min-height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: color-mix(in srgb, var(--bg-soft) 86%, transparent);
+  color: var(--text-muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+}
+
+.ai-chat-mode-chip.is-active {
+  border-color: color-mix(in srgb, var(--accent) 60%, var(--border));
+  color: var(--accent);
+}
+
+.ai-chat-helper {
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+.ai-chat-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.ai-chat-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.ai-chat-answer,
+.ai-chat-section {
+  display: grid;
+  gap: 10px;
+}
+
+.ai-chat-answer-meta {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.ai-chat-section h3 {
+  margin: 0;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+}
+
+.ai-chat-section p {
+  margin: 0;
+  color: var(--text);
+  line-height: 1.55;
+}
+
+.ai-chat-list {
+  margin: 0;
+  padding-left: 18px;
+  display: grid;
+  gap: 6px;
+}
+
+.ai-chat-list li {
+  color: var(--text);
+  line-height: 1.5;
+}
+
+@media (max-width: 960px) {
+  .ai-chat-shell {
+    grid-template-columns: 1fr;
+  }
+}
+
 .logs-console-error-header {
   display: flex;
   justify-content: space-between;
