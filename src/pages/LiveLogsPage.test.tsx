@@ -271,17 +271,17 @@ describe("LiveLogsPage", () => {
     expect(screen.getByRole("button", { name: /resume live stream/i })).toBeInTheDocument();
   });
 
-  it("opens Gemini diagnosis panel and disables submit without a question", async () => {
+  it("opens the AI assistant diagnosis panel and disables submit without a question", async () => {
     const user = userEvent.setup();
 
     renderPage();
-    await user.click(screen.getByRole("button", { name: /diagnose with gemini/i }));
+    await user.click(screen.getByRole("button", { name: /ask ai assistant/i }));
 
     expect(screen.getByRole("heading", { name: /ai diagnosis/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /run diagnosis/i })).toBeDisabled();
   });
 
-  it("submits the last visible log lines to Gemini and renders the diagnosis", async () => {
+  it("submits the last visible log lines to the AI assistant and renders the diagnosis", async () => {
     const user = userEvent.setup();
     useRealtimeStore.setState({
       ...useRealtimeStore.getState(),
@@ -310,7 +310,7 @@ describe("LiveLogsPage", () => {
     });
 
     renderPage();
-    await user.click(screen.getByRole("button", { name: /diagnose with gemini/i }));
+    await user.click(screen.getByRole("button", { name: /ask ai assistant/i }));
     await user.click(screen.getByRole("button", { name: /^15m$/i }));
     await user.type(screen.getByLabelText(/^question$/i), "Why did this fail?");
     await user.click(screen.getByRole("button", { name: /run diagnosis/i }));
@@ -334,15 +334,14 @@ describe("LiveLogsPage", () => {
     expect(screen.getByText(/expired jwt during reconnect/i)).toBeInTheDocument();
     expect(screen.getByText(/12:01 websocket rejected expired jwt/i)).toBeInTheDocument();
     expect(screen.getByText(/check jwt expiry/i)).toBeInTheDocument();
-    expect(screen.getByText(/gemini-2.5-flash/i)).toBeInTheDocument();
   });
 
-  it("shows a readable Gemini error inline", async () => {
+  it("shows a readable AI assistant error inline", async () => {
     const user = userEvent.setup();
     vi.mocked(diagnoseLogsWithGemini).mockRejectedValue(new Error("Provider timeout"));
 
     renderPage();
-    await user.click(screen.getByRole("button", { name: /diagnose with gemini/i }));
+    await user.click(screen.getByRole("button", { name: /ask ai assistant/i }));
     await user.type(screen.getByLabelText(/^question$/i), "What happened?");
     await user.click(screen.getByRole("button", { name: /run diagnosis/i }));
 

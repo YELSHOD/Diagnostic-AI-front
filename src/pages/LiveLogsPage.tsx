@@ -604,11 +604,6 @@ export function LiveLogsPage() {
                   </div>
                   <span className="badge">{selectedTargetName}</span>
                 </div>
-                <div className="logs-ai-result-meta">
-                  <span>{diagnosis.provider}</span>
-                  <span>{diagnosis.model}</span>
-                  <span>{diagnosis.promptVersion}</span>
-                </div>
                 {diagnosis.probableRootCause ? (
                   <div className="logs-ai-section">
                     <h4>{t("logs.ai.rootCauseTitle")}</h4>

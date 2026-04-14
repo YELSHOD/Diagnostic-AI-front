@@ -12,11 +12,11 @@ vi.mock("@entities/runtime-target/api", () => ({
 }));
 
 vi.mock("@features/ai/api", () => ({
-  diagnoseLogsWithGemini: vi.fn()
+  chatWithAiAssistant: vi.fn()
 }));
 
 import { useRuntimeTargets } from "@entities/runtime-target/api";
-import { diagnoseLogsWithGemini } from "@features/ai/api";
+import { chatWithAiAssistant } from "@features/ai/api";
 
 function renderPage() {
   return render(
@@ -32,7 +32,7 @@ describe("AiChatPage", () => {
   beforeEach(() => {
     localStorage.clear();
     useSettingsStore.getState().setLocale("en");
-    vi.mocked(diagnoseLogsWithGemini).mockReset();
+    vi.mocked(chatWithAiAssistant).mockReset();
     vi.mocked(useRuntimeTargets).mockReset();
     vi.mocked(useRuntimeTargets).mockReturnValue({
       data: [
@@ -80,81 +80,84 @@ describe("AiChatPage", () => {
     });
   });
 
-  it("infers product help mode and renders a user/assistant thread", async () => {
+  it("sends a normal chat request and renders a conversational assistant answer", async () => {
     const user = userEvent.setup();
-    vi.mocked(diagnoseLogsWithGemini).mockResolvedValue({
+    vi.mocked(chatWithAiAssistant).mockResolvedValue({
       provider: "gemini",
       model: "gemini-2.5-flash",
       promptVersion: "v1",
-      summary: "Change password in the Account page.",
-      timeline: ["Open Account", "Submit password form"],
-      probableRootCause: "",
-      evidence: ["Account page supports password updates."],
-      nextChecks: ["Open Account page."],
+      answer: "Change password in the Account page.",
+      suggestions: ["How do I open the Account page?"],
+      relatedPages: ["Account"],
       rawText: "raw"
     });
 
     renderPage();
     await user.type(screen.getByLabelText(/question/i), "Where do I change my password?");
-    await user.click(screen.getByRole("button", { name: /ask gemini/i }));
+    await user.click(screen.getByRole("button", { name: /ask ai assistant/i }));
 
-    expect(vi.mocked(diagnoseLogsWithGemini)).toHaveBeenCalledWith({
-      mode: "product_help",
-      service: "",
-      question: "Where do I change my password?",
-      logLines: [],
-      timeRange: {
-        mode: "all",
-        label: "Showing: All streamed",
-        from: null,
-        to: null
+    expect(vi.mocked(chatWithAiAssistant)).toHaveBeenCalledWith({
+      message: "Where do I change my password?",
+      history: [],
+      context: {
+        service: "restaurant-demo",
+        logLines: [
+          "2026-04-13T11:30:04Z INFO [restaurant-demo] Restaurant accepted orderId=ORD-1 etaMinutes=24",
+          "2026-04-13T11:30:08Z INFO [restaurant-demo] Kitchen marked order ready orderId=ORD-1"
+        ]
       },
-      levelFilter: "",
-      textFilter: ""
     });
 
     expect(screen.getByText(/where do i change my password/i)).toBeInTheDocument();
     expect(await screen.findByText(/change password in the account page/i)).toBeInTheDocument();
+    expect(screen.getByText(/how do i open the account page/i)).toBeInTheDocument();
   });
 
-  it("infers diagnosis mode, uses current realtime context, and renders an assistant bubble", async () => {
+  it("sends chat history and keeps the assistant response as plain text", async () => {
     const user = userEvent.setup();
-    vi.mocked(diagnoseLogsWithGemini).mockResolvedValue({
+    vi.mocked(chatWithAiAssistant)
+      .mockResolvedValueOnce({
+        provider: "gemini",
+        model: "gemini-2.5-flash",
+        promptVersion: "v1",
+        answer: "Hello. I can help with the app or with the current logs.",
+        suggestions: [],
+        relatedPages: [],
+        rawText: "raw"
+      })
+      .mockResolvedValueOnce({
       provider: "gemini",
       model: "gemini-2.5-flash",
       promptVersion: "v1",
-      summary: "The order completed unusually fast.",
-      timeline: ["Accepted", "Ready"],
-      probableRootCause: "Likely mock or bad status update.",
-      evidence: ["ETA was 24 minutes."],
-      nextChecks: ["Check order workflow."],
-      rawText: "raw"
-    });
+        answer: "The order moved from accepted to ready very quickly.",
+        suggestions: ["Open Live Logs for restaurant-demo."],
+        relatedPages: ["Live Logs"],
+        rawText: "raw"
+      });
 
     renderPage();
+    await user.type(screen.getByLabelText(/question/i), "Hello");
+    await user.click(screen.getByRole("button", { name: /ask ai assistant/i }));
     await user.type(screen.getByLabelText(/question/i), "What happened to this order?");
-    await user.click(screen.getByRole("button", { name: /ask gemini/i }));
+    await user.click(screen.getByRole("button", { name: /ask ai assistant/i }));
 
-    expect(vi.mocked(diagnoseLogsWithGemini)).toHaveBeenCalledWith({
-      mode: "diagnosis",
-      service: "restaurant-demo",
-      question: "What happened to this order?",
-      logLines: [
-        "2026-04-13T11:30:04Z INFO [restaurant-demo] Restaurant accepted orderId=ORD-1 etaMinutes=24",
-        "2026-04-13T11:30:08Z INFO [restaurant-demo] Kitchen marked order ready orderId=ORD-1"
+    expect(vi.mocked(chatWithAiAssistant)).toHaveBeenLastCalledWith({
+      message: "What happened to this order?",
+      history: [
+        { role: "user", content: "Hello" },
+        { role: "assistant", content: "Hello. I can help with the app or with the current logs." }
       ],
-      timeRange: {
-        mode: "all",
-        label: "Showing: All streamed",
-        from: null,
-        to: null
+      context: {
+        service: "restaurant-demo",
+        logLines: [
+          "2026-04-13T11:30:04Z INFO [restaurant-demo] Restaurant accepted orderId=ORD-1 etaMinutes=24",
+          "2026-04-13T11:30:08Z INFO [restaurant-demo] Kitchen marked order ready orderId=ORD-1"
+        ]
       },
-      levelFilter: "",
-      textFilter: ""
     });
 
-    expect(await screen.findByText(/the order completed unusually fast/i)).toBeInTheDocument();
-    expect(screen.getByText(/likely mock or bad status update/i)).toBeInTheDocument();
+    expect(await screen.findByText(/the order moved from accepted to ready very quickly/i)).toBeInTheDocument();
+    expect(screen.queryByText(/probable root cause/i)).not.toBeInTheDocument();
     expect(screen.getAllByText(/restaurant-demo/i).length).toBeGreaterThan(0);
   });
 });

@@ -27,8 +27,37 @@ export type AiDiagnosisResponse = {
   rawText: string;
 };
 
+export type AiChatRequest = {
+  message: string;
+  history: Array<{
+    role: "user" | "assistant";
+    content: string;
+  }>;
+  context: {
+    service: string;
+    logLines: string[];
+  } | null;
+};
+
+export type AiChatResponse = {
+  provider: string;
+  model: string;
+  promptVersion: string;
+  answer: string;
+  suggestions: string[];
+  relatedPages: string[];
+  rawText: string;
+};
+
 export function diagnoseLogsWithGemini(body: AiDiagnosisRequest) {
   return apiRequest<AiDiagnosisResponse>("/api/ai/diagnose", {
+    method: "POST",
+    body
+  });
+}
+
+export function chatWithAiAssistant(body: AiChatRequest) {
+  return apiRequest<AiChatResponse>("/api/ai/chat", {
     method: "POST",
     body
   });

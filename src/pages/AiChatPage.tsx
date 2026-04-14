@@ -1,92 +1,20 @@
 import { useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useRuntimeTargets } from "@entities/runtime-target/api";
-import { diagnoseLogsWithGemini, type AiDiagnosisResponse } from "@features/ai/api";
+import { chatWithAiAssistant, type AiChatResponse } from "@features/ai/api";
 import { useRealtimeStore } from "@features/realtime/store";
 import { useI18n } from "@shared/i18n/useI18n";
 import { PageIntro } from "@shared/ui/PageIntro";
 
-type ChatMode = "diagnosis" | "product_help";
-
 type ChatMessage =
   | { id: string; role: "user"; text: string }
-  | { id: string; role: "assistant"; mode: ChatMode; response: AiDiagnosisResponse; contextLabel: string | null };
-
-const DEFAULT_TIME_RANGE = {
-  mode: "all" as const,
-  label: "Showing: All streamed",
-  from: null,
-  to: null
-};
-
-const DIAGNOSIS_HINTS = [
-  "log",
-  "logs",
-  "error",
-  "exception",
-  "trace",
-  "failure",
-  "failed",
-  "runtime",
-  "target",
-  "incident",
-  "order",
-  "restaurant",
-  "заказ",
-  "лог",
-  "логи",
-  "ошибка",
-  "исключение",
-  "почему упало",
-  "ресторан"
-];
-
-const PRODUCT_HELP_HINTS = [
-  "where",
-  "how do i",
-  "how to",
-  "password",
-  "settings",
-  "account",
-  "page",
-  "screen",
-  "change password",
-  "api base url",
-  "ws base url",
-  "где",
-  "как",
-  "пароль",
-  "настройк",
-  "аккаунт",
-  "страниц",
-  "экран",
-  "сменить пароль"
-];
-
-function inferMode(question: string, hasContext: boolean): ChatMode {
-  const normalized = question.toLowerCase();
-  if (PRODUCT_HELP_HINTS.some((hint) => normalized.includes(hint))) {
-    return "product_help";
-  }
-
-  const isDiagnosis = hasContext || DIAGNOSIS_HINTS.some((hint) => normalized.includes(hint));
-  return isDiagnosis ? "diagnosis" : "product_help";
-}
+  | { id: string; role: "assistant"; response: AiChatResponse; contextLabel: string | null };
 
 function buildLogLines(logs: Array<{ ts: string; service: string; payload: { message: string; level?: string | null } }>) {
   return logs.slice(-40).map((line) => {
     const level = line.payload.level ?? "INFO";
     return `${line.ts} ${level} [${line.service}] ${line.payload.message}`;
   });
-}
-
-function toAssistantSections(response: AiDiagnosisResponse) {
-  return [
-    response.probableRootCause ? { titleKey: "aiChat.rootCauseTitle", items: [response.probableRootCause] } : null,
-    response.timeline.length > 0 ? { titleKey: "aiChat.timelineTitle", items: response.timeline } : null,
-    response.evidence.length > 0 ? { titleKey: "aiChat.evidenceTitle", items: response.evidence } : null,
-    response.nextChecks.length > 0 ? { titleKey: "aiChat.nextChecksTitle", items: response.nextChecks } : null
-  ].filter(Boolean) as Array<{ titleKey: string; items: string[] }>;
 }
 
 export function AiChatPage() {
@@ -129,7 +57,6 @@ export function AiChatPage() {
       return;
     }
 
-    const mode = inferMode(trimmed, diagnosisContext.logLines.length > 0);
     const userMessage: ChatMessage = {
       id: `user-${Date.now()}`,
       role: "user",
@@ -142,14 +69,18 @@ export function AiChatPage() {
     setError(null);
 
     try {
-      const response = await diagnoseLogsWithGemini({
-        mode,
-        service: mode === "diagnosis" ? diagnosisContext.service : "",
-        question: trimmed,
-        logLines: mode === "diagnosis" ? diagnosisContext.logLines : [],
-        timeRange: DEFAULT_TIME_RANGE,
-        levelFilter: "",
-        textFilter: ""
+      const response = await chatWithAiAssistant({
+        message: trimmed,
+        history: messages.map((message) => ({
+          role: message.role,
+          content: message.role === "user" ? message.text : message.response.answer
+        })),
+        context: diagnosisContext.logLines.length > 0
+          ? {
+              service: diagnosisContext.service,
+              logLines: diagnosisContext.logLines
+            }
+          : null
       });
 
       setMessages((current) => [
@@ -157,9 +88,8 @@ export function AiChatPage() {
         {
           id: `assistant-${Date.now()}`,
           role: "assistant",
-          mode,
           response,
-          contextLabel: mode === "diagnosis" ? diagnosisContext.label : null
+          contextLabel: diagnosisContext.label
         }
       ]);
     } catch (nextError) {
@@ -202,27 +132,30 @@ export function AiChatPage() {
             }
 
             return (
-              <div key={message.id} className="ai-chat-bubble is-assistant">
-                <div className="ai-chat-bubble-role">{t("aiChat.assistantRole")}</div>
-                {message.contextLabel ? <div className="ai-chat-context-note">{message.contextLabel}</div> : null}
-                <div className="ai-chat-summary">{message.response.summary}</div>
-                <div className="ai-chat-answer-meta">
-                  <span className="badge">{message.response.provider}</span>
-                  <span className="badge">{message.response.model}</span>
-                  <span className="badge">{message.mode === "diagnosis" ? t("aiChat.modeDiagnosis") : t("aiChat.modeProductHelp")}</span>
-                </div>
-                {toAssistantSections(message.response).map((section) => (
-                  <div key={section.titleKey} className="ai-chat-section">
-                    <h3>{t(section.titleKey)}</h3>
-                    <ul className="ai-chat-list">
-                      {section.items.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}
-                    </ul>
-                  </div>
-                ))}
-                <details className="ai-chat-raw">
-                  <summary>{t("aiChat.rawToggle")}</summary>
-                  <pre>{message.response.rawText}</pre>
-                </details>
+                <div key={message.id} className="ai-chat-bubble is-assistant">
+                  <div className="ai-chat-bubble-role">{t("aiChat.assistantRole")}</div>
+                  {message.contextLabel ? <div className="ai-chat-context-note">{message.contextLabel}</div> : null}
+                  <div className="ai-chat-summary">{message.response.answer}</div>
+                  {message.response.suggestions.length > 0 ? (
+                    <div className="ai-chat-section">
+                      <h3>{t("aiChat.suggestionsTitle")}</h3>
+                      <ul className="ai-chat-list">
+                        {message.response.suggestions.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}
+                      </ul>
+                    </div>
+                  ) : null}
+                  {message.response.relatedPages.length > 0 ? (
+                    <div className="ai-chat-section">
+                      <h3>{t("aiChat.relatedPagesTitle")}</h3>
+                      <ul className="ai-chat-list">
+                        {message.response.relatedPages.map((item, index) => <li key={`${item}-${index}`}>{item}</li>)}
+                      </ul>
+                    </div>
+                  ) : null}
+                  <details className="ai-chat-raw">
+                    <summary>{t("aiChat.rawToggle")}</summary>
+                    <pre>{message.response.rawText}</pre>
+                  </details>
               </div>
             );
           })}
