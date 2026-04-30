@@ -1,7 +1,8 @@
-﻿import { useMemo, useState } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { useAnalytics } from "@entities/analytics/api";
 import { useRuntimeTargets } from "@entities/runtime-target/api";
+import { useRealtimeStore } from "@features/realtime/store";
 import { useI18n } from "@shared/i18n/useI18n";
 import { KpiCard } from "@shared/ui/KpiCard";
 import { PageIntro } from "@shared/ui/PageIntro";
@@ -9,6 +10,7 @@ import { LineChart } from "@widgets/LineChart";
 
 export function OverviewPage() {
   const { t } = useI18n();
+  const selectedContainerId = useRealtimeStore((s) => s.selectedContainerId);
   const [service, setService] = useState("");
   const [{ from, to }] = useState(() => {
     const to = new Date().toISOString();
@@ -17,6 +19,16 @@ export function OverviewPage() {
   });
   const analytics = useAnalytics({ from, to, service: service || undefined });
   const runtimeTargets = useRuntimeTargets();
+  const selectedTargetName = useMemo(
+    () => runtimeTargets.data?.find((target) => target.id === selectedContainerId)?.name ?? "",
+    [runtimeTargets.data, selectedContainerId]
+  );
+
+  useEffect(() => {
+    if (selectedTargetName && !service) {
+      setService(selectedTargetName);
+    }
+  }, [selectedTargetName, service]);
 
   const errors = analytics.data?.errorsPerMinute ?? [];
   const totalErrors = useMemo(() => errors.reduce((sum, x) => sum + x.count, 0), [errors]);
@@ -34,6 +46,11 @@ export function OverviewPage() {
         </div>
         <input className="input" placeholder={t("overview.serviceFilter")} value={service} onChange={(e) => setService(e.target.value)} />
       </div>
+      {selectedTargetName ? (
+        <section className="card" style={{ marginTop: 16 }}>
+          <strong>{t("common.currentService")}:</strong> {selectedTargetName}
+        </section>
+      ) : null}
       <div className="grid-3">
         <KpiCard title={t("overview.errorsInWindow")} value={totalErrors} hint={t("overview.errorsHint")} />
         <KpiCard title={t("overview.exceptionTypes")} value={analytics.data?.topExceptionTypes.length ?? 0} hint={t("overview.exceptionHint")} />

@@ -113,6 +113,26 @@ describe("AiChatPage", () => {
     expect(screen.getByText(/how do i open the account page/i)).toBeInTheDocument();
   });
 
+  it("submits on Enter and keeps Shift+Enter for a newline", async () => {
+    const user = userEvent.setup();
+    vi.mocked(chatWithAiAssistant).mockResolvedValue({
+      provider: "gemini",
+      model: "gemini-2.5-flash",
+      promptVersion: "v1",
+      answer: "Hello from the assistant.",
+      suggestions: [],
+      relatedPages: [],
+      rawText: "raw"
+    });
+
+    renderPage();
+    const textarea = screen.getByLabelText(/question/i);
+    await user.type(textarea, "Hello{enter}");
+
+    expect(vi.mocked(chatWithAiAssistant)).toHaveBeenCalledTimes(1);
+    expect(await screen.findByText(/hello from the assistant/i)).toBeInTheDocument();
+  });
+
   it("sends chat history and keeps the assistant response as plain text", async () => {
     const user = userEvent.setup();
     vi.mocked(chatWithAiAssistant)

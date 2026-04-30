@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useState, type KeyboardEvent } from "react";
 import { Link } from "react-router-dom";
 import { useRuntimeTargets } from "@entities/runtime-target/api";
 import { chatWithAiAssistant, type AiChatResponse } from "@features/ai/api";
@@ -99,6 +99,13 @@ export function AiChatPage() {
     }
   }
 
+  function handleComposerKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      void handleSubmit();
+    }
+  }
+
   return (
     <div className="ai-chat-page">
       <PageIntro
@@ -185,6 +192,7 @@ export function AiChatPage() {
               value={question}
               placeholder={t("aiChat.composerPlaceholder")}
               onChange={(event) => setQuestion(event.target.value)}
+              onKeyDown={handleComposerKeyDown}
             />
           </label>
           <div className="ai-chat-actions">

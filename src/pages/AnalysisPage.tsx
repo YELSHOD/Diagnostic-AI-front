@@ -1,13 +1,26 @@
 ﻿import { Link } from "react-router-dom";
 import { useMemo } from "react";
+import { useRuntimeTargets } from "@entities/runtime-target/api";
 import { useRealtimeStore } from "@features/realtime/store";
 import { useI18n } from "@shared/i18n/useI18n";
 import { PageIntro } from "@shared/ui/PageIntro";
 
 export function AnalysisPage() {
   const { t } = useI18n();
+  const selectedContainerId = useRealtimeStore((s) => s.selectedContainerId);
   const clusters = useRealtimeStore((s) => s.clusters);
-  const rows = useMemo(() => Object.values(clusters).sort((a, b) => b.count - a.count), [clusters]);
+  const runtimeTargets = useRuntimeTargets();
+  const selectedTargetName = useMemo(
+    () => runtimeTargets.data?.find((target) => target.id === selectedContainerId)?.name ?? "",
+    [runtimeTargets.data, selectedContainerId]
+  );
+  const rows = useMemo(() => {
+    const allRows = Object.values(clusters).sort((a, b) => b.count - a.count);
+    if (!selectedTargetName) {
+      return allRows;
+    }
+    return allRows.filter((row) => row.service === selectedTargetName);
+  }, [clusters, selectedTargetName]);
   const totalClusters = rows.length;
   const totalEvents = rows.reduce((sum, row) => sum + row.count, 0);
   const newClusters = rows.filter((row) => row.newCluster).length;
@@ -33,6 +46,11 @@ export function AnalysisPage() {
           <div style={{ fontSize: 30, fontWeight: 700, marginTop: 8 }}>{newClusters}</div>
         </article>
       </section>
+      {selectedTargetName ? (
+        <section className="card" style={{ marginBottom: 16 }}>
+          <strong>{t("common.currentService")}:</strong> {selectedTargetName}
+        </section>
+      ) : null}
       <section className="card" style={{ marginBottom: 16 }}>
         <div style={{ fontSize: 12, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.04em" }}>{t("analysis.noteTitle")}</div>
         <div style={{ marginTop: 6, maxWidth: 760 }}>
