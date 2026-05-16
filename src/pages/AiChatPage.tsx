@@ -1,4 +1,4 @@
-import { useMemo, useState, type KeyboardEvent } from "react";
+import { useEffect, useMemo, useState, type KeyboardEvent } from "react";
 import { Link } from "react-router-dom";
 import { useRuntimeTargets } from "@entities/runtime-target/api";
 import { chatWithAiAssistant, type AiChatResponse } from "@features/ai/api";
@@ -9,6 +9,49 @@ import { PageIntro } from "@shared/ui/PageIntro";
 type ChatMessage =
   | { id: string; role: "user"; text: string }
   | { id: string; role: "assistant"; response: AiChatResponse; contextLabel: string | null };
+
+const AI_CHAT_HISTORY_KEY = "diagnostic-ai-chat-history";
+
+function loadChatHistory(): ChatMessage[] {
+  try {
+    const raw = localStorage.getItem(AI_CHAT_HISTORY_KEY);
+    if (!raw) {
+      return [];
+    }
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) {
+      return [];
+    }
+    return parsed.filter(isChatMessage).slice(-40);
+  } catch {
+    return [];
+  }
+}
+
+function isChatMessage(value: unknown): value is ChatMessage {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const item = value as Record<string, unknown>;
+  if (typeof item.id !== "string" || (item.role !== "user" && item.role !== "assistant")) {
+    return false;
+  }
+
+  if (item.role === "user") {
+    return typeof item.text === "string";
+  }
+
+  if (!item.response || typeof item.response !== "object") {
+    return false;
+  }
+
+  return typeof (item.response as Record<string, unknown>).answer === "string";
+}
+
+function saveChatHistory(messages: ChatMessage[]) {
+  localStorage.setItem(AI_CHAT_HISTORY_KEY, JSON.stringify(messages.slice(-40)));
+}
 
 function buildLogLines(logs: Array<{ ts: string; service: string; payload: { message: string; level?: string | null } }>) {
   return logs.slice(-40).map((line) => {
@@ -25,7 +68,11 @@ export function AiChatPage() {
   const [question, setQuestion] = useState("");
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>(loadChatHistory);
+
+  useEffect(() => {
+    saveChatHistory(messages);
+  }, [messages]);
 
   const selectedTarget = useMemo(() => {
     return runtimeTargets.data?.find((target) => target.id === selectedContainerId) ?? null;
