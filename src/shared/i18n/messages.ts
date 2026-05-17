@@ -23,6 +23,7 @@ export const messages = {
         containers: "Runtime targets",
         logs: "Live Логи",
         analysis: "Аналитика",
+        docs: "Документация",
         settings: "Настройки",
         aiChat: "AI Чат"
       }
@@ -238,6 +239,66 @@ export const messages = {
       relatedPagesTitle: "Полезные страницы",
       rawToggle: "Показать raw response"
     },
+    docs: {
+      title: "Документация подключения клиента",
+      description: "Инструкция для подключения любого backend-сервиса к DiagnosticServiceAI через project key. Выбери язык клиента, добавь конфигурацию, перезапусти сервис, и ERROR-логи автоматически создадут Runtime Target.",
+      openSettings: "Открыть настройки",
+      connectionKicker: "Данные подключения",
+      connectionTitle: "Один project key для подключенных сервисов",
+      connectionDescription: "Клиентский сервис отправляет log events в публичный ingest endpoint. DiagnosticServiceAI проверяет project key, создает runtime target по имени сервиса, сохраняет логи, группирует incidents и показывает сервис в Live Logs.",
+      chooseLanguage: "Выбери язык клиента",
+      copy: "Копировать",
+      copied: "Скопировано",
+      guides: {
+        spring: {
+          subtitle: "Рекомендуется для Java-сервисов",
+          whenToUse: "Используй для Spring Boot backend-ов. Сервис автоматически отправляет ERROR-логи через Logback.",
+          howToTest: "Как проверить",
+          testPlace: "Вставь это в любое место Spring-сервиса для теста:",
+          expected: "Ожидаемый результат:",
+          expectedTarget: "Сервис автоматически появится как my-spring-service"
+        },
+        node: {
+          whenToUse: "Используй, когда JavaScript или TypeScript backend ловит exception и должен отправить его в DiagnosticServiceAI."
+        },
+        python: {
+          whenToUse: "Используй, когда Python logging получает ERROR record с exception info."
+        },
+        dotnet: {
+          whenToUse: "Используй для C# сервисов, когда middleware ловит exception."
+        },
+        raw: {
+          subtitle: "Любой язык",
+          whenToUse: "Используй, если твой стек может отправить один POST-запрос при ERROR."
+        }
+      },
+      steps: {
+        restart: {
+          title: "Перезапусти клиентский сервис",
+          description: "Клиент читает environment variables при старте. Обновления страницы браузера недостаточно."
+        },
+        trigger: {
+          title: "Вызови один ERROR",
+          description: "По умолчанию отправляются только ERROR events. INFO и WARN могут оставаться внутри логов клиентского сервиса."
+        },
+        runtime: {
+          title: "Открой Runtime Targets",
+          description: "Сервис появится автоматически по serviceName. Ручное создание Runtime Target не нужно."
+        },
+        logs: {
+          title: "Открой Live Logs",
+          description: "Используй Details и Copy, чтобы смотреть полный stacktrace без перегруза таблицы."
+        }
+      },
+      demo: {
+        kicker: "Демо-сервисы",
+        title: "Необязательные имена локальных demo-сервисов",
+        description: "Это только примеры для демо. Реальные клиентские сервисы могут использовать любое стабильное имя сервиса.",
+        aiChat: "Spring Boot chat backend на порту 8081",
+        restaurant: "Demo workflow для ресторанных заказов",
+        delivery: "Demo workflow для доставки"
+      }
+    },
     settings: {
       title: "Настройки",
       description: "Эти значения держат фронт выровненным с твоим локальным backend, пока ты запускаешь observability-стек в разработке и на демо с разных машин, портов и окружений.",
@@ -364,6 +425,7 @@ export const messages = {
         containers: "Runtime targets",
         logs: "Live Логтар",
         analysis: "Талдау",
+        docs: "Құжаттама",
         settings: "Баптаулар",
         aiChat: "AI Чат"
       }
@@ -566,6 +628,66 @@ export const messages = {
       relatedPagesTitle: "Пайдалы беттер",
       rawToggle: "Raw response көрсету"
     },
+    docs: {
+      title: "Клиентті қосу құжаттамасы",
+      description: "Кез келген backend сервисті project key арқылы DiagnosticServiceAI-ға қосу нұсқаулығы. Клиент тілін таңда, конфигурацияны қос, сервисті қайта іске қос, сонда ERROR логтар Runtime Target-ті автоматты түрде жасайды.",
+      openSettings: "Баптауларды ашу",
+      connectionKicker: "Қосылу мәндері",
+      connectionTitle: "Қосылған сервистер үшін бір project key",
+      connectionDescription: "Клиент сервис log events-ті public ingest endpoint-ке жібереді. DiagnosticServiceAI project key-ді тексереді, serviceName бойынша runtime target жасайды, логтарды сақтайды, incidents топтайды және сервисті Live Logs ішінде көрсетеді.",
+      chooseLanguage: "Клиент тілін таңда",
+      copy: "Көшіру",
+      copied: "Көшірілді",
+      guides: {
+        spring: {
+          subtitle: "Java сервистеріне ұсынылады",
+          whenToUse: "Spring Boot backend-тері үшін қолдан. Сервис ERROR логтарды Logback арқылы автоматты түрде жібереді.",
+          howToTest: "Қалай тексеру",
+          testPlace: "Тест үшін мұны Spring сервисінің кез келген жеріне қой:",
+          expected: "Күтілетін нәтиже:",
+          expectedTarget: "Сервис автоматты түрде my-spring-service ретінде пайда болады"
+        },
+        node: {
+          whenToUse: "JavaScript немесе TypeScript backend exception ұстап, оны DiagnosticServiceAI-ға жіберуі керек болса қолдан."
+        },
+        python: {
+          whenToUse: "Python logging exception info бар ERROR record алған кезде қолдан."
+        },
+        dotnet: {
+          whenToUse: "C# сервистерінде middleware exception ұстаған кезде қолдан."
+        },
+        raw: {
+          subtitle: "Кез келген тіл",
+          whenToUse: "Стегің ERROR кезінде бір POST сұрауын жібере алса қолдан."
+        }
+      },
+      steps: {
+        restart: {
+          title: "Клиент сервисін қайта іске қос",
+          description: "Клиент environment variables мәндерін старт кезінде оқиды. Браузер бетін жаңарту жеткіліксіз."
+        },
+        trigger: {
+          title: "Бір ERROR шақыр",
+          description: "Әдепкі бойынша тек ERROR events жіберіледі. INFO және WARN клиент сервисінің өз логтарында қала береді."
+        },
+        runtime: {
+          title: "Runtime Targets аш",
+          description: "Сервис serviceName бойынша автоматты түрде пайда болады. Runtime Target қолмен жасау қажет емес."
+        },
+        logs: {
+          title: "Live Logs аш",
+          description: "Толық stacktrace көру үшін Details және Copy қолдан, сонда кесте ауырламайды."
+        }
+      },
+      demo: {
+        kicker: "Демо-сервистер",
+        title: "Қосымша локалды demo-сервис атаулары",
+        description: "Бұл тек демо мысалдар. Нақты клиент сервистері кез келген тұрақты service name қолдана алады.",
+        aiChat: "8081 портындағы Spring Boot chat backend",
+        restaurant: "Ресторан тапсырыстары үшін demo workflow",
+        delivery: "Жеткізу үшін demo workflow"
+      }
+    },
     settings: {
       title: "Баптаулар",
       description: "Бұл мәндер фронтты жергілікті backend-пен сәйкестендіріп тұрады, сен observability стегін әртүрлі құрылғылардан, порттардан және ортадан іске қосқан кезде.",
@@ -692,6 +814,7 @@ export const messages = {
         containers: "Runtime targets",
         logs: "Live Logs",
         analysis: "Analysis",
+        docs: "Docs",
         settings: "Settings",
         aiChat: "AI Chat"
       }
@@ -893,6 +1016,66 @@ export const messages = {
       suggestionsTitle: "What to ask next",
       relatedPagesTitle: "Helpful pages",
       rawToggle: "Show raw response"
+    },
+    docs: {
+      title: "Client Integration Docs",
+      description: "Instructions for connecting any backend service to DiagnosticServiceAI with a project key. Choose the client language, add the config, restart the service, and ERROR logs will create Runtime Targets automatically.",
+      openSettings: "Open Settings",
+      connectionKicker: "Connection values",
+      connectionTitle: "Use one project key for connected services",
+      connectionDescription: "The client service sends log events to the public ingest endpoint. DiagnosticServiceAI validates the project key, creates the runtime target by service name, stores logs, groups incidents, and keeps the service visible in Live Logs.",
+      chooseLanguage: "Choose client language",
+      copy: "Copy",
+      copied: "Copied",
+      guides: {
+        spring: {
+          subtitle: "Recommended for Java services",
+          whenToUse: "Use this for Spring Boot backends. The service sends ERROR logs automatically through Logback.",
+          howToTest: "How to test",
+          testPlace: "Put this anywhere in your Spring service:",
+          expected: "Expected result:",
+          expectedTarget: "Service appears automatically as my-spring-service"
+        },
+        node: {
+          whenToUse: "Use this when a JavaScript or TypeScript backend catches an exception and logs it."
+        },
+        python: {
+          whenToUse: "Use this when Python logging receives an ERROR record with exception info."
+        },
+        dotnet: {
+          whenToUse: "Use this for C# services when middleware catches an exception."
+        },
+        raw: {
+          subtitle: "Any language",
+          whenToUse: "Use this when your stack can send one POST request on ERROR."
+        }
+      },
+      steps: {
+        restart: {
+          title: "Restart the client service",
+          description: "The client reads environment variables on startup. Browser refresh is not enough for backend config changes."
+        },
+        trigger: {
+          title: "Trigger one ERROR",
+          description: "Only ERROR events should be sent by default. INFO and WARN can stay inside the client service logs."
+        },
+        runtime: {
+          title: "Open Runtime Targets",
+          description: "The service appears automatically by serviceName. Manual Runtime Target creation is not needed."
+        },
+        logs: {
+          title: "Open Live Logs",
+          description: "Use Details and Copy to inspect full stacktraces without flooding the table."
+        }
+      },
+      demo: {
+        kicker: "Demo services",
+        title: "Optional local demo names",
+        description: "These are just demo examples. Real client services can use any stable service name.",
+        aiChat: "Spring Boot chat backend on port 8081",
+        restaurant: "Restaurant order workflow demo",
+        delivery: "Courier and delivery workflow demo"
+      }
     },
     settings: {
       title: "Settings",

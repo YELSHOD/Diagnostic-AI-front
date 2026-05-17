@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { useDefaultIngestProject, useGenerateDefaultIngestProject } from "@entities/project/api";
 import { LocaleSwitcher } from "@features/settings/LocaleSwitcher";
 import { settingsDefaults, useSettingsStore } from "@features/settings/store";
 import { useI18n } from "@shared/i18n/useI18n";
@@ -19,6 +20,8 @@ export function SettingsPage() {
   const reconnectMaxMs = useSettingsStore((s) => s.reconnectMaxMs);
   const applyConnectionSettings = useSettingsStore((s) => s.applyConnectionSettings);
   const resetConnectionDefaults = useSettingsStore((s) => s.resetConnectionDefaults);
+  const defaultProject = useDefaultIngestProject();
+  const generateProject = useGenerateDefaultIngestProject();
   const active = useMemo(
     () => ({ apiBaseUrl, wsBaseUrl, reconnectMinMs, reconnectMaxMs }),
     [apiBaseUrl, wsBaseUrl, reconnectMinMs, reconnectMaxMs]
@@ -61,6 +64,8 @@ export function SettingsPage() {
       wsBaseUrl: `ws://localhost:${port}`
     });
   }
+
+  const ingestUrl = `${active.apiBaseUrl.replace(/\/$/, "")}/api/public/logs`;
 
   return (
     <div className="settings-page">
@@ -189,6 +194,35 @@ export function SettingsPage() {
             <h2>{t("settings.workspaceTitle")}</h2>
             <p>{t("settings.workspaceHelper")}</p>
             <LocaleSwitcher compact />
+          </section>
+
+          <section className="card settings-panel settings-side-card">
+            <div className="settings-panel-kicker">Project key</div>
+            <h2>Local service connection</h2>
+            <p>
+              Use this key in local backend services so they can send logs to this DiagnosticServiceAI instance.
+            </p>
+            {defaultProject.isLoading ? (
+              <div style={{ color: "var(--text-muted)" }}>Loading project key...</div>
+            ) : null}
+            {defaultProject.data ? (
+              <div style={{ display: "grid", gap: 8, fontSize: 13 }}>
+                <code style={{ wordBreak: "break-all" }}>DIAGNOSTIC_PROJECT_KEY={defaultProject.data.projectKey}</code>
+                <code style={{ wordBreak: "break-all" }}>DIAGNOSTIC_SERVER_URL={ingestUrl}</code>
+              </div>
+            ) : (
+              <button
+                type="button"
+                className="button"
+                onClick={() => generateProject.mutate()}
+                disabled={generateProject.isPending}
+              >
+                {generateProject.isPending ? "Generating..." : "Generate project key"}
+              </button>
+            )}
+            <div className="settings-defaults-note">
+              Runtime Targets will appear automatically after a service sends its first log event with this key.
+            </div>
           </section>
         </aside>
       </div>

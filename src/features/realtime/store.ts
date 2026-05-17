@@ -33,9 +33,21 @@ export const useRealtimeStore = create<RealtimeState>()(
       setConnected: (connected) => set({ connected }),
       setContainer: (selectedContainerId) => set({ selectedContainerId }),
       pushLog: (entry) =>
-        set((state) => ({ logs: [...state.logs.slice(-799), entry] })),
+        set((state) => {
+          const key = `${entry.ts}|${entry.service}|${entry.payload.level ?? ""}|${entry.payload.message}`;
+          const exists = state.logs.some(
+            (line) => `${line.ts}|${line.service}|${line.payload.level ?? ""}|${line.payload.message}` === key
+          );
+          return exists ? state : { logs: [...state.logs.slice(-799), entry] };
+        }),
       pushError: (entry) =>
-        set((state) => ({ errors: [...state.errors.slice(-199), entry] })),
+        set((state) => {
+          const key = `${entry.payload.eventTime}|${entry.service}|${entry.payload.exceptionType}|${entry.payload.message}`;
+          const exists = state.errors.some(
+            (error) => `${error.payload.eventTime}|${error.service}|${error.payload.exceptionType}|${error.payload.message}` === key
+          );
+          return exists ? state : { errors: [...state.errors.slice(-199), entry] };
+        }),
       applyClusterUpdate: (entry) =>
         set((state) => {
           const prev = state.clusters[entry.payload.clusterKey];

@@ -38,6 +38,27 @@ function toFormValue(target: RuntimeTargetDto): UpsertRuntimeTargetRequest {
   };
 }
 
+function endpointLabel(target: RuntimeTargetDto) {
+  if (target.host && target.port) {
+    return `${target.host}:${target.port}`;
+  }
+  if (target.logSourceType === "HTTP_INGEST") {
+    return "HTTP ingest";
+  }
+  return "-";
+}
+
+function logSourceLabel(target: RuntimeTargetDto) {
+  if (target.logSourceType === "HTTP_INGEST") {
+    return "Auto HTTP logs";
+  }
+  return target.logSourceType;
+}
+
+function isAutoProjectTarget(target: RuntimeTargetDto) {
+  return target.logSourceType === "HTTP_INGEST" && Boolean(target.metadata.projectId);
+}
+
 export function RuntimeTargetsPage() {
   const { t } = useI18n();
   const { data, isLoading, error } = useRuntimeTargets();
@@ -175,20 +196,23 @@ export function RuntimeTargetsPage() {
             {(data ?? []).map((target) => (
               <tr key={target.id}>
                 <td>{target.name}</td>
-                <td><span className="badge">{target.type}</span></td>
-                <td>{target.logSourceType}</td>
+                <td>
+                  <span className="badge">{target.type}</span>
+                  {target.metadata.projectId ? <span className="badge" style={{ marginLeft: 6 }}>project</span> : null}
+                </td>
+                <td>{logSourceLabel(target)}</td>
                 <td>
                   <span className="badge" style={{ borderColor: statusTone(target.status), color: statusTone(target.status) }}>
                     {target.status}
                   </span>
                 </td>
-                <td>{target.host && target.port ? `${target.host}:${target.port}` : "—"}</td>
+                <td>{endpointLabel(target)}</td>
                 <td>
                   <div style={{ display: "flex", gap: 8, justifyContent: "flex-end", flexWrap: "wrap" }}>
                     <Link className="button" to={`/logs?runtimeTargetId=${encodeURIComponent(target.id)}`}>
                       {t("runtimeTargets.openLogs")}
                     </Link>
-                    {target.type === "LOCAL_SERVICE" ? (
+                    {target.type === "LOCAL_SERVICE" && !isAutoProjectTarget(target) ? (
                       <>
                         <button className="button secondary" onClick={() => openEditForm(target)}>{t("runtimeTargets.edit")}</button>
                         <button className="button secondary" onClick={() => void removeTarget(target)} disabled={deleteMutation.isPending}>{t("runtimeTargets.delete")}</button>

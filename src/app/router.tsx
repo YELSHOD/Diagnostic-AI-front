@@ -7,6 +7,7 @@ import { RuntimeTargetsPage } from "@pages/RuntimeTargetsPage";
 import { LiveLogsPage } from "@pages/LiveLogsPage";
 import { AnalysisPage } from "@pages/AnalysisPage";
 import { AiChatPage } from "@pages/AiChatPage";
+import { DocsPage } from "@pages/DocsPage";
 import { SettingsPage } from "@pages/SettingsPage";
 import { LoginPage } from "@pages/LoginPage";
 import { RegisterPage } from "@pages/RegisterPage";
@@ -55,6 +56,7 @@ export const routes: RouteObject[] = [
       { path: "logs", element: <LiveLogsPage /> },
       { path: "analysis", element: <AnalysisPage /> },
       { path: "ai-chat", element: <AiChatPage /> },
+      { path: "docs", element: <DocsPage /> },
       { path: "settings", element: <SettingsPage /> },
       { path: "account", element: <AccountPage /> }
     ]

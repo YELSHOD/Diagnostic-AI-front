@@ -29,6 +29,9 @@ const QUICK_RANGES: Array<{ key: QuickRangeKey; minutes?: number }> = [
   { key: "24h", minutes: 1_440 }
 ];
 
+const MAX_AI_LOG_LINE_LENGTH = 1800;
+const MAX_LOG_PREVIEW_LENGTH = 220;
+
 function formatConsoleTime(timestamp: string) {
   const date = new Date(timestamp);
   if (Number.isNaN(date.getTime())) {
@@ -88,8 +91,22 @@ function buildVisibleLogLines(
   return lines.slice(-50).map((line) => {
     const parsed = parseConsoleSource(line.payload.message, line.service);
     const level = line.payload.level ?? "INFO";
-    return `${line.ts} ${level} [${parsed.source}] ${parsed.message}`;
+    const value = `${line.ts} ${level} [${parsed.source}] ${parsed.message}`;
+    return value.length > MAX_AI_LOG_LINE_LENGTH
+      ? `${value.slice(0, MAX_AI_LOG_LINE_LENGTH)}... [truncated]`
+      : value;
   });
+}
+
+function previewMessage(message: string) {
+  const firstLine = message.split(/\r?\n/)[0] ?? message;
+  return firstLine.length > MAX_LOG_PREVIEW_LENGTH
+    ? `${firstLine.slice(0, MAX_LOG_PREVIEW_LENGTH)}...`
+    : firstLine;
+}
+
+function logEntryKey(line: { ts: string; service: string; payload: { message: string; level?: string | null } }, index: number) {
+  return `${line.ts}|${line.service}|${line.payload.level ?? ""}|${line.payload.message.slice(0, 80)}|${index}`;
 }
 
 function toIsoOrNull(value: number | null) {
@@ -111,6 +128,8 @@ export function LiveLogsPage() {
   const [diagnosePending, setDiagnosePending] = useState(false);
   const [diagnoseError, setDiagnoseError] = useState<string | null>(null);
   const [diagnosis, setDiagnosis] = useState<AiDiagnosisResponse | null>(null);
+  const [expandedLogKey, setExpandedLogKey] = useState<string | null>(null);
+  const [copiedLogKey, setCopiedLogKey] = useState<string | null>(null);
   const runtimeTargetId = params.get("runtimeTargetId") ?? params.get("containerId") ?? "";
   const runtimeTargets = useRuntimeTargets();
   const consoleRef = useRef<HTMLDivElement | null>(null);
@@ -199,6 +218,17 @@ export function LiveLogsPage() {
   function handleClear() {
     clearStream();
     setErrorPanelOpen(false);
+    setExpandedLogKey(null);
+  }
+
+  async function handleCopyLog(key: string, value: string) {
+    try {
+      await navigator.clipboard.writeText(value);
+      setCopiedLogKey(key);
+      window.setTimeout(() => setCopiedLogKey((current) => current === key ? null : current), 1400);
+    } catch {
+      setCopiedLogKey(null);
+    }
   }
 
   function handleQuickRangeSelect(key: QuickRangeKey) {
@@ -537,8 +567,11 @@ export function LiveLogsPage() {
               ) : null}
               {filtered.map((line, idx) => {
                 const parsed = parseConsoleSource(line.payload.message, line.service);
+                const entryKey = logEntryKey(line, idx);
+                const isExpanded = expandedLogKey === entryKey;
+                const canExpand = parsed.message.length > MAX_LOG_PREVIEW_LENGTH || /\r?\n/.test(parsed.message);
                 return (
-                  <div key={`${line.ts}-${idx}`} className={`logs-console-row log-${line.payload.level ?? "INFO"}`}>
+                  <div key={entryKey} className={`logs-console-row log-${line.payload.level ?? "INFO"}${isExpanded ? " is-expanded" : ""}`}>
                     <span className="logs-console-level" title={line.payload.level ?? "-"}>
                       {line.payload.level ?? "-"}
                     </span>
@@ -548,9 +581,42 @@ export function LiveLogsPage() {
                     <span className="logs-console-service" title={parsed.source}>
                       {parsed.source}
                     </span>
-                    <span className="logs-console-message" title={parsed.message}>
-                      {parsed.message}
-                    </span>
+                    <div className="logs-console-message">
+                      <div className="logs-console-message-main" title={parsed.message}>
+                        {previewMessage(parsed.message)}
+                      </div>
+                      <div className="logs-console-row-actions">
+                        <button
+                          type="button"
+                          className="logs-console-mini-button"
+                          onClick={() => setExpandedLogKey((current) => current === entryKey ? null : entryKey)}
+                        >
+                          {isExpanded ? "Hide" : canExpand ? "Details" : "View"}
+                        </button>
+                        <button
+                          type="button"
+                          className="logs-console-mini-button"
+                          onClick={() => void handleCopyLog(entryKey, parsed.message)}
+                        >
+                          {copiedLogKey === entryKey ? "Copied" : "Copy"}
+                        </button>
+                      </div>
+                    </div>
+                    {isExpanded ? (
+                      <div className="logs-console-detail">
+                        <div className="logs-console-detail-header">
+                          <span>Full log event</span>
+                          <button
+                            type="button"
+                            className="logs-console-mini-button"
+                            onClick={() => void handleCopyLog(entryKey, parsed.message)}
+                          >
+                            {copiedLogKey === entryKey ? "Copied" : "Copy content"}
+                          </button>
+                        </div>
+                        <pre>{parsed.message}</pre>
+                      </div>
+                    ) : null}
                   </div>
                 );
               })}

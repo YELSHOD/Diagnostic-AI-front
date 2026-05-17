@@ -23,6 +23,7 @@ export function ShellLayout({ children }: Props) {
     ["/runtime-targets", t("shell.nav.containers")],
     ["/logs", t("shell.nav.logs")],
     ["/analysis", t("shell.nav.analysis")],
+    ["/docs", t("shell.nav.docs")],
     ["/settings", t("shell.nav.settings")],
     ["/ai-chat", t("shell.nav.aiChat")]
   ] as const;
